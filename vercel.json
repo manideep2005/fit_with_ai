@@ -24,6 +24,14 @@
             "dest": "/public/videos/$1"
         },
         {
+            "src": "/debug-env",
+            "dest": "/server.js"
+        },
+        {
+            "src": "/test-email",
+            "dest": "/server.js"
+        },
+        {
             "handle": "filesystem"
         },
         {
@@ -33,8 +41,8 @@
     ],
     "env": {
         "NODE_ENV": "production",
-        "BASE_URL": "https://fit-with-ai.vercel.app",
-        "APP_URL": "https://fit-with-ai.vercel.app",
+        "BASE_URL": "https://fit-with-qdma47vkc-gonugunta-manideeps-projects.vercel.app",
+        "APP_URL": "https://fit-with-qdma47vkc-gonugunta-manideeps-projects.vercel.app",
         "SESSION_SECRET": "temporary-session-secret-key-12345",
         "VERCEL": "1"
     },
