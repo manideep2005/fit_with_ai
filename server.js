@@ -368,11 +368,7 @@ function getRecommendations(activityLevel) {
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Serve static files - more explicit configuration
-app.use('/js', express.static(path.join(__dirname, 'public/js')));
-app.use('/css', express.static(path.join(__dirname, 'public/css')));
-app.use('/images', express.static(path.join(__dirname, 'public/images')));
-app.use('/videos', express.static(path.join(__dirname, 'public/videos')));
+// Serve static files - single configuration
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -386,11 +382,8 @@ app.use(session({
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        sameSite: 'lax',
-        domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined
-    },
-    proxy: process.env.NODE_ENV === 'production'
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
 }));
 
 // Authentication middleware
@@ -420,11 +413,11 @@ app.get('/', (req, res) => {
     try {
         // If user is logged in and not onboarded, redirect to onboarding
         if (req.session.userData && !req.session.userData.isOnboarded) {
-            return res.redirect('/custom-onboarding');
+            return res.redirect(302, '/custom-onboarding');
         }
         // If user is logged in and onboarded, redirect to dashboard
         if (req.session.userData && req.session.userData.isOnboarded) {
-            return res.redirect('/dashboard');
+            return res.redirect(302, '/dashboard');
         }
         res.render('index', { user: null });
     } catch (error) {
@@ -545,11 +538,14 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-// Onboarding Routes
-app.get('/custom-onboarding', requireAuth, (req, res) => {
+// Custom onboarding route
+app.get('/custom-onboarding', (req, res) => {
     try {
+        if (!req.session.userData) {
+            return res.redirect(302, '/');
+        }
         if (req.session.userData.isOnboarded) {
-            return res.redirect('/dashboard');
+            return res.redirect(302, '/dashboard');
         }
         res.render('custom-onboarding', { 
             user: req.session.userData,
