@@ -32,6 +32,14 @@ app.use(session({
     }
 }));
 
+// Authentication middleware
+const requireAuth = (req, res, next) => {
+    if (!req.session.userData) {
+        return res.status(401).json({ error: 'Authentication required' });
+    }
+    next();
+};
+
 // Basic error handler for views
 app.use((err, req, res, next) => {
     console.error('Error:', err);
@@ -39,6 +47,11 @@ app.use((err, req, res, next) => {
         return res.status(404).json({ error: 'View not found' });
     }
     next(err);
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
 });
 
 // Routes
@@ -73,102 +86,45 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/signup', (req, res) => {
-    const { fullName, email, password } = req.body;
-    // For testing purposes
-    req.session.userData = {
-        id: 1,
-        email: email,
-        fullName: fullName
-    };
-    res.json({ success: true });
+    try {
+        const { fullName, email, password } = req.body;
+        // For testing purposes
+        req.session.userData = {
+            id: 1,
+            email: email,
+            fullName: fullName
+        };
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Signup error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
-// Dashboard Route
+// Protected Routes
 app.get('/dashboard', requireAuth, (req, res) => {
-    res.render('Dashboard', { 
-        user: req.session.userData,
-        userDetails: {
-            age: 25,
-            gender: "Not specified",
-            height: "170cm",
-            weight: "70kg",
-            fitnessGoals: "Stay healthy",
-            activityLevel: "Moderate"
-        }
-    });
-});
-
-// Feature Routes
-app.get('/workouts', requireAuth, (req, res) => {
-    res.render('Workouts', { 
-        user: req.session.userData, 
-        workouts: [] 
-    });
-});
-
-app.get('/nutrition', requireAuth, (req, res) => {
-    res.render('Nutrition1', { 
-        user: req.session.userData, 
-        logs: [] 
-    });
-});
-
-app.get('/health-metrics', requireAuth, (req, res) => {
-    res.render('HealthMetrics1', { 
-        user: req.session.userData, 
-        metrics: [] 
-    });
-});
-
-app.get('/meal-suggestions', requireAuth, (req, res) => {
-    res.render('AIMealSuggestions', { user: req.session.userData });
-});
-
-app.get('/google-fit', requireAuth, (req, res) => {
-    res.render('GoogleFitIntegration', { user: req.session.userData });
-});
-
-app.get('/doctor-consult', requireAuth, (req, res) => {
-    res.render('DoctorConsult1', { user: req.session.userData });
-});
-
-app.get('/settings', requireAuth, (req, res) => {
-    res.render('settings', { user: req.session.userData });
-});
-
-app.get('/alerts', requireAuth, (req, res) => {
-    res.render('Alerts1', { user: req.session.userData });
-});
-
-app.get('/food-analysis', requireAuth, (req, res) => {
-    res.render('FoodAnalysis1', { user: req.session.userData });
-});
-
-app.get('/live-tracking', requireAuth, (req, res) => {
-    res.render('LiveTracking1', { user: req.session.userData });
-});
-
-app.get('/community', requireAuth, (req, res) => {
-    res.render('community', { user: req.session.userData });
-});
-
-app.get('/schedule', requireAuth, (req, res) => {
-    res.render('schedule1', { user: req.session.userData });
-});
-
-app.get('/progress', requireAuth, (req, res) => {
-    res.render('progress1', { user: req.session.userData });
+    try {
+        res.json({
+            user: req.session.userData,
+            userDetails: {
+                age: 25,
+                gender: "Not specified",
+                height: "170cm",
+                weight: "70kg",
+                fitnessGoals: "Stay healthy",
+                activityLevel: "Moderate"
+            }
+        });
+    } catch (error) {
+        console.error('Dashboard error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
 // Logout Route
 app.get('/logout', (req, res) => {
     req.session.destroy();
-    res.redirect('/');
-});
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'ok' });
+    res.json({ success: true });
 });
 
 // Global error handler
