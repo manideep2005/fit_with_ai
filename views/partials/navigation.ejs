@@ -1,52 +1,77 @@
+<!-- Sidebar Content -->
 <div class="sidebar-content">
-    <div class="logo">
-        <img src="/images/logo.png" alt="Fit-With-AI Logo" onerror="this.src='/images/default-logo.png'">
-        <span>Fit-With-AI</span>
-    </div>
-    
-    <nav class="nav-menu">
-        <a href="/dashboard" class="nav-item <%= currentPage === 'dashboard' ? 'active' : '' %>">
-            <i class="fas fa-home"></i>
-            <span>Dashboard</span>
-        </a>
-        <a href="/workouts" class="nav-item <%= currentPage === 'workouts' ? 'active' : '' %>">
-            <i class="fas fa-dumbbell"></i>
-            <span>Workouts</span>
-        </a>
-        <a href="/nutrition" class="nav-item <%= currentPage === 'nutrition' ? 'active' : '' %>">
-            <i class="fas fa-apple-alt"></i>
-            <span>Nutrition</span>
-        </a>
-        <a href="/health-metrics" class="nav-item <%= currentPage === 'health-metrics' ? 'active' : '' %>">
-            <i class="fas fa-heartbeat"></i>
-            <span>Health Metrics</span>
-        </a>
-        <a href="/meal-suggestions" class="nav-item <%= currentPage === 'meal-suggestions' ? 'active' : '' %>">
-            <i class="fas fa-utensils"></i>
-            <span>Meal Suggestions</span>
-        </a>
-        <a href="/google-fit" class="nav-item <%= currentPage === 'google-fit' ? 'active' : '' %>">
-            <i class="fab fa-google"></i>
-            <span>Google Fit</span>
-        </a>
-        <a href="/doctor-consult" class="nav-item <%= currentPage === 'doctor-consult' ? 'active' : '' %>">
-            <i class="fas fa-user-md"></i>
-            <span>Doctor Consult</span>
-        </a>
-        <a href="/settings" class="nav-item <%= currentPage === 'settings' ? 'active' : '' %>">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
-        </a>
-    </nav>
-    
-    <div class="user-profile">
-        <img src="/images/default-avatar.png" alt="User Avatar" class="avatar">
-        <div class="user-info">
-            <span class="user-name"><%= user ? user.fullName : 'Guest' %></span>
-            <a href="/logout" class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
+    <div class="sidebar-header">
+        <div class="sidebar-logo">
+            <i class="fas fa-heartbeat"></i> FitWit AI
         </div>
+        <div class="user-info">
+            <div class="user-avatar">
+                <%= user ? user.fullName.charAt(0) : 'G' %>
+            </div>
+            <div class="user-details">
+                <div class="user-name"><%= user ? user.fullName : 'Guest' %></div>
+                <div class="user-plan">Premium Plan</div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="sidebar-menu">
+        <ul>
+            <li>
+                <a href="/dashboard" class="<%= currentPage === 'dashboard' ? 'active' : '' %>">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="/workouts" class="<%= currentPage === 'workouts' ? 'active' : '' %>">
+                    <i class="fas fa-dumbbell"></i>
+                    <span>Workouts</span>
+                </a>
+            </li>
+            <li>
+                <a href="/nutrition" class="<%= currentPage === 'nutrition' ? 'active' : '' %>">
+                    <i class="fas fa-apple-alt"></i>
+                    <span>Nutrition</span>
+                </a>
+            </li>
+            <li>
+                <a href="/health-metrics" class="<%= currentPage === 'health-metrics' ? 'active' : '' %>">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>Health Metrics</span>
+                </a>
+            </li>
+            <li>
+                <a href="/meal-suggestions" class="<%= currentPage === 'meal-suggestions' ? 'active' : '' %>">
+                    <i class="fas fa-utensils"></i>
+                    <span>Meal Suggestions</span>
+                </a>
+            </li>
+            <li>
+                <a href="/google-fit" class="<%= currentPage === 'google-fit' ? 'active' : '' %>">
+                    <i class="fab fa-google"></i>
+                    <span>Google Fit</span>
+                </a>
+            </li>
+            <li>
+                <a href="/doctor-consult" class="<%= currentPage === 'doctor-consult' ? 'active' : '' %>">
+                    <i class="fas fa-user-md"></i>
+                    <span>Doctor Consult</span>
+                </a>
+            </li>
+            <li>
+                <a href="/settings" class="<%= currentPage === 'settings' ? 'active' : '' %>">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a href="/logout" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
     </div>
 </div> 

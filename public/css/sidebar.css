@@ -61,11 +61,10 @@
 
 .sidebar-menu {
     list-style: none;
-    padding: 0.5rem 0;
 }
 
 .sidebar-menu li {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
 }
 
 .sidebar-menu a {
@@ -77,7 +76,6 @@
     text-decoration: none;
     transition: all 0.3s ease;
     border-left: 3px solid transparent;
-    font-size: 0.95rem;
 }
 
 .sidebar-menu a:hover,
@@ -93,7 +91,6 @@
 .sidebar-menu i {
     width: 20px;
     text-align: center;
-    font-size: 1.1rem;
 }
 
 .sidebar-footer {
@@ -113,4 +110,57 @@
 
 .logout-btn:hover {
     color: #ff6b6b;
+}
+
+/* Mobile Menu Button */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 101;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 80px;
+        transform: translateX(0);
+    }
+    
+    .sidebar.expanded {
+        width: 250px;
+    }
+    
+    .sidebar-logo,
+    .user-details,
+    .sidebar-menu span {
+        display: none;
+    }
+    
+    .sidebar.expanded .sidebar-logo,
+    .sidebar.expanded .user-details,
+    .sidebar.expanded .sidebar-menu span {
+        display: block;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 100;
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+    }
 }

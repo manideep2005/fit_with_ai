@@ -1,0 +1,3 @@
+This directory will contain exercise tutorial videos.
+Please add your video files here with the following naming convention:
+exercise-name.mp4 (e.g., bench-press.mp4, squat.mp4, etc.) 

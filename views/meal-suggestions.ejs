@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitWit AI - Meal Suggestions</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-gray-100">
+    <%- include('partials/sidebar') %>
+    
+    <div class="p-4 sm:ml-64">
+        <div class="p-4 border-2 border-gray-200 rounded-lg">
+            <div class="mb-6">
+                <h1 class="text-3xl font-semibold text-gray-800">Meal Suggestions</h1>
+                <p class="text-gray-600">Personalized meal recommendations based on your goals</p>
+            </div>
+
+            <!-- Meal Plan Categories -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold">Weight Loss</h3>
+                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">1200-1500 cal</span>
+                    </div>
+                    <p class="text-gray-600 mb-4">Low-calorie, nutrient-dense meals for healthy weight loss</p>
+                    <button class="w-full bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600">
+                        View Plan
+                    </button>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold">Muscle Gain</h3>
+                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">2500-3000 cal</span>
+                    </div>
+                    <p class="text-gray-600 mb-4">High-protein meals for muscle growth and recovery</p>
+                    <button class="w-full bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600">
+                        View Plan
+                    </button>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold">Maintenance</h3>
+                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">2000-2200 cal</span>
+                    </div>
+                    <p class="text-gray-600 mb-4">Balanced meals to maintain current weight and health</p>
+                    <button class="w-full bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600">
+                        View Plan
+                    </button>
+                </div>
+            </div>
+
+            <!-- Today's Suggested Meals -->
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-2xl font-semibold mb-4">Today's Suggested Meals</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Breakfast -->
+                    <div class="border rounded-lg overflow-hidden">
+                        <img src="/images/breakfast.jpg" alt="Breakfast" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg mb-2">Breakfast</h3>
+                            <ul class="space-y-2">
+                                <li class="flex justify-between">
+                                    <span class="text-gray-600">Oatmeal with Berries</span>
+                                    <span class="text-gray-500">300 cal</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span class="text-gray-600">Greek Yogurt</span>
+                                    <span class="text-gray-500">120 cal</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span class="text-gray-600">Almonds</span>
+                                    <span class="text-gray-500">160 cal</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Lunch -->
+                    <div class="border rounded-lg overflow-hidden">
+                        <img src="/images/lunch.jpg" alt="Lunch" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg mb-2">Lunch</h3>
+                            <ul class="space-y-2">
+                                <li class="flex justify-between">
+                                    <span class="text-gray-600">Grilled Chicken Salad</span>
+                                    <span class="text-gray-500">350 cal</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span class="text-gray-600">Quinoa</span>
+                                    <span class="text-gray-500">120 cal</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span class="text-gray-600">Avocado</span>
+                                    <span class="text-gray-500">160 cal</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Dinner -->
+                    <div class="border rounded-lg overflow-hidden">
+                        <img src="/images/dinner.jpg" alt="Dinner" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg mb-2">Dinner</h3>
+                            <ul class="space-y-2">
+                                <li class="flex justify-between">
+                                    <span class="text-gray-600">Salmon Fillet</span>
+                                    <span class="text-gray-500">400 cal</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span class="text-gray-600">Sweet Potato</span>
+                                    <span class="text-gray-500">150 cal</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span class="text-gray-600">Steamed Broccoli</span>
+                                    <span class="text-gray-500">55 cal</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Snacks -->
+                    <div class="border rounded-lg overflow-hidden">
+                        <img src="/images/snacks.jpg" alt="Snacks" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg mb-2">Snacks</h3>
+                            <ul class="space-y-2">
+                                <li class="flex justify-between">
+                                    <span class="text-gray-600">Apple</span>
+                                    <span class="text-gray-500">95 cal</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span class="text-gray-600">Protein Shake</span>
+                                    <span class="text-gray-500">150 cal</span>
+                                </li>
+                                <li class="flex justify-between">
+                                    <span class="text-gray-600">Mixed Nuts</span>
+                                    <span class="text-gray-500">180 cal</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meal Preferences -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold">Meal Preferences</h2>
+                    <button class="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600">
+                        Update Preferences
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="border rounded-lg p-4">
+                        <h3 class="font-semibold text-lg mb-2">Dietary Restrictions</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Vegetarian</span>
+                            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Gluten-free</span>
+                            <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Dairy-free</span>
+                        </div>
+                    </div>
+                    <div class="border rounded-lg p-4">
+                        <h3 class="font-semibold text-lg mb-2">Allergies</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">Nuts</span>
+                            <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded">Shellfish</span>
+                        </div>
+                    </div>
+                    <div class="border rounded-lg p-4">
+                        <h3 class="font-semibold text-lg mb-2">Meal Times</h3>
+                        <ul class="space-y-2">
+                            <li class="text-gray-600">Breakfast: 8:00 AM</li>
+                            <li class="text-gray-600">Lunch: 1:00 PM</li>
+                            <li class="text-gray-600">Dinner: 7:00 PM</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html> 

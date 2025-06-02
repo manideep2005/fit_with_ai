@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workouts - Fit-With-AI</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/workouts.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <%- include('partials/navigation', { currentPage: 'workouts' }) %>
+        </aside>
+        
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <main class="main-content">
+            <div class="header">
+                <h1 class="page-title">Welcome back, <span id="welcomeNameDisplay">G.Manideep</span> !</h1>
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search workouts...">
+                    </div>
+                    <button class="export-pdf-btn" id="exportWorkoutPdf">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>Export Workout Plan</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Multi-Step Form -->
+            <div class="workout-form-container" id="workoutFormContainer">
+                <h2 class="form-title">Create Your Custom Workout Plan</h2>
+                
+                <!-- Form Steps -->
+                <div class="form-steps">
+                   <div class="form-step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Personal Information</div>
+                    </div>
+                    <div class="form-step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Fitness Goals</div>
+                    </div>
+                    <div class="form-step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Preferences</div>
+                    </div>
+                    <div class="form-step" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-label">Schedule</div>
+                    </div>
+                    <div class="form-step" data-step="5">
+                        <div class="step-number">5</div>
+                        <div class="step-label">Generate Plan</div>
+                    </div>
+                </div>
+                
+                <!-- Form Panels -->
+                <div class="form-panel active" data-panel="1">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Age</label>
+                                <input type="number" class="form-control" placeholder="Enter your age" min="16" max="100">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Gender</label>
+                                <select class="form-control">
+                                    <option value="" selected disabled>Select your gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                    <option value="prefer_not_to_say">Prefer not to say</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Height (cm)</label>
+                                <input type="number" class="form-control" placeholder="Enter your height" min="100" max="250">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Weight (kg)</label>
+                                <input type="number" class="form-control" placeholder="Enter your weight" min="30" max="300">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Fitness Level</label>
+                        <div class="fitness-level">
+                            <div class="fitness-tag beginner active" data-level="beginner">Beginner</div>
+                            <div class="fitness-tag intermediate" data-level="intermediate">Intermediate</div>
+                            <div class="fitness-tag advanced" data-level="advanced">Advanced</div>
+                        </div>
+                        <div class="form-text">Select your current fitness experience level</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Any health conditions?</label>
+                        <textarea class="form-control" placeholder="Please list any injuries, medical conditions, or limitations we should consider" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-next" data-next="2">Next <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+                
+                <div class="form-panel" data-panel="2">
+                    <div class="form-group">
+                        <label class="form-label">Primary Fitness Goal</label>
+                        <div class="goals-container">
+                            <div class="goal-item active" data-goal="weight-loss">
+                                <div class="goal-icon"><i class="fas fa-weight"></i></div>
+                                <div class="goal-text">Weight Loss</div>
+                            </div>
+                            <div class="goal-item" data-goal="muscle-gain">
+                                <div class="goal-icon"><i class="fas fa-dumbbell"></i></div>
+                                <div class="goal-text">Muscle Gain</div>
+                            </div>
+                            <div class="goal-item" data-goal="endurance">
+                                <div class="goal-icon"><i class="fas fa-running"></i></div>
+                                <div class="goal-text">Endurance</div>
+                            </div>
+                            <div class="goal-item" data-goal="flexibility">
+                                <div class="goal-icon"><i class="fas fa-child"></i></div>
+                                <div class="goal-text">Flexibility</div>
+                            </div>
+                            <div class="goal-item" data-goal="overall-fitness">
+                                <div class="goal-icon"><i class="fas fa-heart"></i></div>
+                                <div class="goal-text">Overall Fitness</div>
+                            </div>
+                            <div class="goal-item" data-goal="strength">
+                                <div class="goal-icon"><i class="fas fa-fist-raised"></i></div>
+                                <div class="goal-text">Strength</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Target Areas (select multiple)</label>
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-check">
+                                    <input type="checkbox" id="area-full-body" class="form-check-input" checked>
+                                    <label for="area-full-body" class="form-check-label">Full Body</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="area-upper-body" class="form-check-input">
+                                    <label for="area-upper-body" class="form-check-label">Upper Body</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="area-lower-body" class="form-check-input">
+                                    <label for="area-lower-body" class="form-check-label">Lower Body</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="area-core" class="form-check-input">
+                                    <label for="area-core" class="form-check-label">Core</label>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-check">
+                                    <input type="checkbox" id="area-arms" class="form-check-input">
+                                    <label for="area-arms" class="form-check-label">Arms</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="area-back" class="form-check-input">
+                                    <label for="area-back" class="form-check-label">Back</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="area-chest" class="form-check-input">
+                                    <label for="area-chest" class="form-check-label">Chest</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="area-legs" class="form-check-input">
+                                    <label for="area-legs" class="form-check-label">Legs</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Target Weight (kg)</label>
+                                <input type="number" class="form-control" placeholder="Your target weight" min="30" max="300">
+                                <div class="form-text">Optional - leave blank if not applicable</div>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Timeline (weeks)</label>
+                                <input type="number" class="form-control" placeholder="Number of weeks" min="1" max="52" value="12">
+                                <div class="form-text">How long do you want this plan to last?</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-prev" data-prev="1"><i class="fas fa-arrow-left"></i> Previous</button>
+                        <button type="button" class="btn btn-next" data-next="3">Next <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+                
+                <div class="form-panel" data-panel="3">
+                    <div class="form-group">
+                        <label class="form-label">Workout Environment</label>
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-check">
+                                    <input type="checkbox" id="env-gym" class="form-check-input" checked>
+                                    <label for="env-gym" class="form-check-label">Gym</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="env-home" class="form-check-input">
+                                    <label for="env-home" class="form-check-label">Home</label>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-check">
+                                    <input type="checkbox" id="env-outdoor" class="form-check-input">
+                                    <label for="env-outdoor" class="form-check-label">Outdoor</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="env-minimal" class="form-check-input">
+                                    <label for="env-minimal" class="form-check-label">Minimal Equipment</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Available Equipment</label>
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-check">
+                                    <input type="checkbox" id="equip-free-weights" class="form-check-input" checked>
+                                    <label for="equip-free-weights" class="form-check-label">Free Weights</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="equip-machines" class="form-check-input" checked>
+                                    <label for="equip-machines" class="form-check-label">Weight Machines</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="equip-cardio" class="form-check-input" checked>
+                                    <label for="equip-cardio" class="form-check-label">Cardio Equipment</label>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-check">
+                                    <input type="checkbox" id="equip-bodyweight" class="form-check-input" checked>
+                                    <label for="equip-bodyweight" class="form-check-label">Bodyweight Only</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="equip-resistance" class="form-check-input">
+                                    <label for="equip-resistance" class="form-check-label">Resistance Bands</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="equip-other" class="form-check-input">
+                                    <label for="equip-other" class="form-check-label">Other</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Preferred Workout Style</label>
+                        <select class="form-control">
+                            <option value="" selected disabled>Select your preferred workout style</option>
+                            <option value="hiit">HIIT (High Intensity Interval Training)</option>
+                            <option value="circuit">Circuit Training</option>
+                            <option value="traditional">Traditional Split (e.g., Push/Pull/Legs)</option>
+                            <option value="functional">Functional Training</option>
+                            <option value="powerlifting">Powerlifting</option>
+                            <option value="bodybuilding">Bodybuilding</option>
+                            <option value="crossfit">CrossFit-style</option>
+                            <option value="cardio">Cardio-focused</option>
+                            <option value="mixed">Mixed (AI Recommended)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Extra Considerations</label>
+                        <div class="toggle-label">
+                            <span class="toggle-text">Include warm-up routines</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="toggle-label">
+                            <span class="toggle-text">Include cool-down stretches</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="toggle-label">
+                            <span class="toggle-text">Include video demonstrations</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="toggle-label">
+                            <span class="toggle-text">Track progress with metrics</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-prev" data-prev="2"><i class="fas fa-arrow-left"></i> Previous</button>
+                        <button type="button" class="btn btn-next" data-next="4">Next <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+                
+                <div class="form-panel" data-panel="4">
+                    <div class="form-group">
+                        <label class="form-label">Weekly Workout Frequency</label>
+                        <select class="form-control">
+                            <option value="" selected disabled>Select number of days per week</option>
+                            <option value="2">2 days per week</option>
+                            <option value="3">3 days per week</option>
+                            <option value="4">4 days per week</option>
+                            <option value="5">5 days per week</option>
+                            <option value="6">6 days per week</option>
+                            <option value="7">7 days per week</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Preferred Workout Days</label>
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-check">
+                                    <input type="checkbox" id="day-monday" class="form-check-input" checked>
+                                    <label for="day-monday" class="form-check-label">Monday</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="day-tuesday" class="form-check-input" checked>
+                                    <label for="day-tuesday" class="form-check-label">Tuesday</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="day-wednesday" class="form-check-input">
+                                    <label for="day-wednesday" class="form-check-label">Wednesday</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="day-thursday" class="form-check-input" checked>
+                                    <label for="day-thursday" class="form-check-label">Thursday</label>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-check">
+                                    <input type="checkbox" id="day-friday" class="form-check-input" checked>
+                                    <label for="day-friday" class="form-check-label">Friday</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="day-saturday" class="form-check-input">
+                                    <label for="day-saturday" class="form-check-label">Saturday</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" id="day-sunday" class="form-check-input">
+                                    <label for="day-sunday" class="form-check-label">Sunday</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Time Available per Session</label>
+                                <select class="form-control">
+                                    <option value="" selected disabled>Select time per workout</option>
+                                    <option value="15">15 minutes</option>
+                                    <option value="30">30 minutes</option>
+                                    <option value="45">45 minutes</option>
+                                    <option value="60">60 minutes</option>
+                                    <option value="90">90 minutes</option>
+                                    <option value="120">120+ minutes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label">Preferred Time of Day</label>
+                                <select class="form-control">
+                                    <option value="" selected disabled>Select time of day</option>
+                                    <option value="morning">Morning</option>
+                                    <option value="afternoon">Afternoon</option>
+                                    <option value="evening">Evening</option>
+                                    <option value="night">Night</option>
+                                    <option value="varies">Varies/No Preference</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Rest and Recovery</label>
+                        <div class="toggle-label">
+                            <span class="toggle-text">Include active recovery days</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="toggle-label">
+                            <span class="toggle-text">Schedule deload weeks</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="form-text">Active recovery includes light activity like walking, yoga, or swimming. Deload weeks are periodic reductions in training intensity to allow for recovery.</div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-prev" data-prev="3"><i class="fas fa-arrow-left"></i> Previous</button>
+                        <button type="button" class="btn btn-next" data-next="5">Next <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+                
+                <div class="form-panel" data-panel="5">
+                    <div class="form-group text-center">
+                        <i class="fas fa-robot" style="font-size: 4rem; color: #4ecdc4; margin-bottom: 1.5rem;"></i>
+                        <h3 style="margin-bottom: 1rem;">Ready to Generate Your Personalized Plan!</h3>
+                        <p style="margin-bottom: 2rem; color: rgba(255, 255, 255, 0.7);">Our AI will now analyze your preferences and create a custom workout plan designed specifically for you.</p>
+                        
+                        <div class="toggle-label" style="justify-content: center; margin-bottom: 1.5rem;">
+                            <span class="toggle-text">Include nutrition recommendations</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="toggle-label" style="justify-content: center; margin-bottom: 1.5rem;">
+                            <span class="toggle-text">Enable progress tracking</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="toggle-label" style="justify-content: center; margin-bottom: 1.5rem;">
+                            <span class="toggle-text">Receive weekly adjustment recommendations</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-prev" data-prev="4"><i class="fas fa-arrow-left"></i> Previous</button>
+                        <button type="button" class="btn btn-next" id="generatePlanBtn">Generate My Plan <i class="fas fa-bolt"></i></button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Workout Plan Results (initially hidden) -->
+            <div class="plan-container" id="planContainer" style="display: none;">
+                <div class="plan-header">
+                    <h2 class="plan-title">Your Personalized Workout Plan</h2>
+                    <p class="plan-subtitle">Weight Loss & Strength Building • 12 Week Program</p>
+                </div>
+                
+                <div class="workout-grid">
+                    <!-- Monday Workout -->
+                    <div class="workout-card">
+                        <div class="workout-header">
+                            <div class="workout-day">Monday</div>
+                            <div class="workout-focus">Upper Body Strength</div>
+                            <div class="workout-icon"><i class="fas fa-dumbbell"></i></div>
+                        </div>
+                        <div class="workout-body">
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Bench Press</div>
+                                    <div class="exercise-stats">3 sets x 8-12 reps</div>
+                                    <div class="exercise-video" data-video="bench-press">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Seated Cable Rows</div>
+                                    <div class="exercise-stats">3 sets x 12-15 reps</div>
+                                    <div class="exercise-video" data-video="cable-rows">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Overhead Press</div>
+                                    <div class="exercise-stats">3 sets x 8-10 reps</div>
+                                    <div class="exercise-video" data-video="overhead-press">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Lat Pulldowns</div>
+                                    <div class="exercise-stats">3 sets x 12-15 reps</div>
+                                    <div class="exercise-video" data-video="lat-pulldowns">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Bicep Curls</div>
+                                    <div class="exercise-stats">3 sets x 12-15 reps</div>
+                                    <div class="exercise-video" data-video="bicep-curls">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tuesday Workout -->
+                    <div class="workout-card">
+                        <div class="workout-header">
+                            <div class="workout-day">Tuesday</div>
+                            <div class="workout-focus">HIIT Cardio</div>
+                            <div class="workout-icon"><i class="fas fa-heartbeat"></i></div>
+                        </div>
+                        <div class="workout-body">
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Warm-up Jog</div>
+                                    <div class="exercise-stats">5 minutes</div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Sprint Intervals</div>
+                                    <div class="exercise-stats">30 sec sprint, 60 sec walk x 8 rounds</div>
+                                    <div class="exercise-video" data-video="sprint-intervals">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Burpees</div>
+                                    <div class="exercise-stats">3 sets x 12 reps</div>
+                                    <div class="exercise-video" data-video="burpees">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Mountain Climbers</div>
+                                    <div class="exercise-stats">3 sets x 45 seconds</div>
+                                    <div class="exercise-video" data-video="mountain-climbers">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Cool Down</div>
+                                    <div class="exercise-stats">5 minutes stretching</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Thursday Workout -->
+                    <div class="workout-card">
+                        <div class="workout-header">
+                            <div class="workout-day">Thursday</div>
+                            <div class="workout-focus">Lower Body & Core</div>
+                            <div class="workout-icon"><i class="fas fa-running"></i></div>
+                        </div>
+                        <div class="workout-body">
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Squats</div>
+                                    <div class="exercise-stats">4 sets x 10-12 reps</div>
+                                    <div class="exercise-video" data-video="squats">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Romanian Deadlifts</div>
+                                    <div class="exercise-stats">3 sets x 10-12 reps</div>
+                                    <div class="exercise-video" data-video="romanian-deadlifts">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check"><div class="exercise-details">
+                                    <div class="exercise-name">Leg Press</div>
+                                    <div class="exercise-stats">3 sets x 12-15 reps</div>
+                                    <div class="exercise-video" data-video="leg-press">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Plank</div>
+                                    <div class="exercise-stats">3 sets x 45-60 seconds</div>
+                                    <div class="exercise-video" data-video="plank">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Russian Twists</div>
+                                    <div class="exercise-stats">3 sets x 20 reps</div>
+                                    <div class="exercise-video" data-video="russian-twists">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Friday Workout -->
+                    <div class="workout-card">
+                        <div class="workout-header">
+                            <div class="workout-day">Friday</div>
+                            <div class="workout-focus">Full Body Circuit</div>
+                            <div class="workout-icon"><i class="fas fa-fire"></i></div>
+                        </div>
+                        <div class="workout-body">
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Push-ups</div>
+                                    <div class="exercise-stats">3 sets x Max reps</div>
+                                    <div class="exercise-video" data-video="push-ups">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Kettlebell Swings</div>
+                                    <div class="exercise-stats">3 sets x 15 reps</div>
+                                    <div class="exercise-video" data-video="kettlebell-swings">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Dumbbell Lunges</div>
+                                    <div class="exercise-stats">3 sets x 12 reps each leg</div>
+                                    <div class="exercise-video" data-video="dumbbell-lunges">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Pull-ups</div>
+                                    <div class="exercise-stats">3 sets x Max reps</div>
+                                    <div class="exercise-video" data-video="pull-ups">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="exercise-item">
+                                <input type="checkbox" class="exercise-check">
+                                <div class="exercise-details">
+                                    <div class="exercise-name">Box Jumps</div>
+                                    <div class="exercise-stats">3 sets x 10 reps</div>
+                                    <div class="exercise-video" data-video="box-jumps">
+                                        <i class="fas fa-play-circle"></i> Watch Demo
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="plan-actions">
+                    <button type="button" class="btn btn-secondary" id="backToFormBtn"><i class="fas fa-arrow-left"></i> Edit Plan</button>
+                    <button type="button" class="btn btn-primary" id="downloadPlanBtn"><i class="fas fa-download"></i> Download Plan</button>
+                    <button type="button" class="btn btn-success" id="startPlanBtn"><i class="fas fa-play"></i> Start Plan</button>
+                </div>
+                
+                <div class="plan-features">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="feature-title">Progress Tracking</div>
+                        <div class="feature-text">Track your weight, measurements, and strength gains over time</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-utensils"></i></div>
+                        <div class="feature-title">Nutrition Plan</div>
+                        <div class="feature-text">Customized meal suggestions to support your weight loss goals</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-sync-alt"></i></div>
+                        <div class="feature-title">Weekly Updates</div>
+                        <div class="feature-text">Receive plan adjustments based on your progress</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Demo Video Modal -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-modal-content">
+            <span class="close-video">&times;</span>
+            <h3 class="video-title">Exercise Demonstration</h3>
+            <div class="video-container">
+                <video id="exerciseVideo" controls>
+                    <source src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="video-info">
+                <h4 id="exerciseVideoTitle">Exercise Name</h4>
+                <p id="exerciseVideoDescription">Detailed instructions on how to perform this exercise with proper form.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script>
+        // Form Navigation
+        document.querySelectorAll('.btn-next').forEach(button => {
+            button.addEventListener('click', function() {
+                const nextPanel = this.getAttribute('data-next');
+                if (nextPanel) {
+                    // Hide all panels
+                    document.querySelectorAll('.form-panel').forEach(panel => {
+                        panel.classList.remove('active');
+                    });
+                    
+                    // Show target panel
+                    document.querySelector(`.form-panel[data-panel="${nextPanel}"]`).classList.add('active');
+                    
+                    // Update progress steps
+                    document.querySelectorAll('.form-step').forEach(step => {
+                        step.classList.remove('active');
+                    });
+                    document.querySelector(`.form-step[data-step="${nextPanel}"]`).classList.add('active');
+                    
+                    // Scroll to top
+                    window.scrollTo(0, 0);
+                }
+            });
+        });
+        
+        document.querySelectorAll('.btn-prev').forEach(button => {
+            button.addEventListener('click', function() {
+                const prevPanel = this.getAttribute('data-prev');
+                if (prevPanel) {
+                    // Hide all panels
+                    document.querySelectorAll('.form-panel').forEach(panel => {
+                        panel.classList.remove('active');
+                    });
+                    
+                    // Show target panel
+                    document.querySelector(`.form-panel[data-panel="${prevPanel}"]`).classList.add('active');
+                    
+                    // Update progress steps
+                    document.querySelectorAll('.form-step').forEach(step => {
+                        step.classList.remove('active');
+                    });
+                    document.querySelector(`.form-step[data-step="${prevPanel}"]`).classList.add('active');
+                    
+                    // Scroll to top
+                    window.scrollTo(0, 0);
+                }
+            });
+        });
+        
+        // Fitness Level Selection
+        document.querySelectorAll('.fitness-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                document.querySelectorAll('.fitness-tag').forEach(t => {
+                    t.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+        
+        // Goal Selection
+        document.querySelectorAll('.goal-item').forEach(goal => {
+            goal.addEventListener('click', function() {
+                document.querySelectorAll('.goal-item').forEach(g => {
+                    g.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+        
+        // Generate Plan Button
+        document.getElementById('generatePlanBtn').addEventListener('click', function() {
+            document.querySelector('.form-container').style.display = 'none';
+            document.getElementById('planContainer').style.display = 'block';
+            
+            // Simulate loading if needed
+            // showLoading();
+            // setTimeout(hidePlanning, 3000);
+        });
+        
+        // Back to Form Button
+        document.getElementById('backToFormBtn').addEventListener('click', function() {
+            document.querySelector('.form-container').style.display = 'block';
+            document.getElementById('planContainer').style.display = 'none';
+        });
+        
+        // Video Demonstration Modal
+        const videoModal = document.getElementById('videoModal');
+        const exerciseVideo = document.getElementById('exerciseVideo');
+        const exerciseVideoTitle = document.getElementById('exerciseVideoTitle');
+        const exerciseVideoDescription = document.getElementById('exerciseVideoDescription');
+        
+        document.querySelectorAll('.exercise-video').forEach(videoBtn => {
+            videoBtn.addEventListener('click', function() {
+                const videoId = this.getAttribute('data-video');
+                const exerciseName = this.closest('.exercise-details').querySelector('.exercise-name').innerText;
+                
+                // Set video source (in a real app, this would be dynamic)
+                // exerciseVideo.src = `videos/${videoId}.mp4`;
+                exerciseVideoTitle.innerText = exerciseName;
+                exerciseVideoDescription.innerText = `Follow along with this demonstration of ${exerciseName} to ensure proper form and maximum effectiveness.`;
+                
+                videoModal.style.display = 'block';
+            });
+        });
+        
+        // Close Video Modal
+        document.querySelector('.close-video').addEventListener('click', function() {
+            videoModal.style.display = 'none';
+            exerciseVideo.pause();
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target == videoModal) {
+                videoModal.style.display = 'none';
+                exerciseVideo.pause();
+            }
+        });
+
+        // PDF Export functionality
+        document.getElementById('exportWorkoutPdf').addEventListener('click', function() {
+            // Create a container for the PDF content
+            const pdfContent = document.createElement('div');
+            pdfContent.style.padding = '20px';
+            pdfContent.style.color = '#000';
+            pdfContent.style.backgroundColor = '#fff';
+
+            // Add header
+            const header = document.createElement('div');
+            header.innerHTML = `
+                <h1 style="color: #4ecdc4; margin-bottom: 20px; font-size: 24px;">Personalized Workout Plan</h1>
+                <div style="margin-bottom: 20px;">
+                    <p style="margin-bottom: 5px;"><strong>User:</strong> ${document.querySelector('.user-name').textContent}</p>
+                    <p style="margin-bottom: 5px;"><strong>Plan:</strong> ${document.querySelector('.user-plan').textContent}</p>
+                    <p><strong>Generated Date:</strong> ${new Date().toLocaleDateString()}</p>
+                </div>
+            `;
+            pdfContent.appendChild(header);
+
+            // Add workout plan details
+            const workoutCards = document.querySelectorAll('.workout-card');
+            if (workoutCards.length > 0) {
+                const workoutSection = document.createElement('div');
+                workoutSection.innerHTML = '<h2 style="color: #ff6b6b; margin-bottom: 15px;">Weekly Workout Schedule</h2>';
+
+                workoutCards.forEach(card => {
+                    const day = card.querySelector('.workout-day').textContent;
+                    const focus = card.querySelector('.workout-focus').textContent;
+                    const exercises = Array.from(card.querySelectorAll('.exercise-item')).map(exercise => {
+                        const name = exercise.querySelector('.exercise-name').textContent;
+                        const stats = exercise.querySelector('.exercise-stats').textContent;
+                        return `
+                            <div style="margin-bottom: 10px; padding-left: 20px;">
+                                <p style="font-weight: bold; margin-bottom: 5px;">${name}</p>
+                                <p style="color: #666;">${stats}</p>
+                            </div>
+                        `;
+                    }).join('');
+
+                    workoutSection.innerHTML += `
+                        <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+                            <h3 style="color: #4ecdc4; margin-bottom: 10px;">${day}</h3>
+                            <p style="color: #666; margin-bottom: 15px;">${focus}</p>
+                            <div>${exercises}</div>
+                        </div>
+                    `;
+                });
+                pdfContent.appendChild(workoutSection);
+            }
+
+            // Add notes and recommendations if available
+            const notes = document.querySelector('.plan-notes');
+            if (notes) {
+                const notesSection = document.createElement('div');
+                notesSection.innerHTML = `
+                    <h2 style="color: #ff6b6b; margin: 20px 0 15px;">Notes & Recommendations</h2>
+                    <div style="padding: 15px; background-color: #f9f9f9; border-radius: 8px;">
+                        ${notes.innerHTML}
+                    </div>
+                `;
+                pdfContent.appendChild(notesSection);
+            }
+
+            // Add footer
+            const footer = document.createElement('div');
+            footer.innerHTML = `
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666;">
+                    <p>Generated by Fit-With-AI</p>
+                    <p>This workout plan is personalized based on your fitness goals and preferences.</p>
+                    <p>For best results, follow the plan consistently and maintain proper form during exercises.</p>
+                </div>
+            `;
+            pdfContent.appendChild(footer);
+
+            // Configure PDF options
+            const opt = {
+                margin: 1,
+                filename: 'workout-plan.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            // Show loading state
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+
+            // Generate PDF
+            html2pdf().set(opt).from(pdfContent).save()
+                .then(() => {
+                    // Restore button state
+                    this.innerHTML = '<i class="fas fa-file-pdf"></i> Export Workout Plan';
+                })
+                .catch(err => {
+                    console.error('PDF generation failed:', err);
+                    this.innerHTML = '<i class="fas fa-file-pdf"></i> Export Workout Plan';
+                    alert('Failed to generate PDF. Please try again.');
+                });
+        });
+
+        // Display user name from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const userName = localStorage.getItem('userName') || 'User';
+            document.getElementById('userNameDisplay').textContent = userName;
+            document.getElementById('welcomeNameDisplay').textContent = userName;
+            
+            // Update avatar initials
+            const initials = userName.split(' ')
+                .map(word => word[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+            document.getElementById('userAvatar').textContent = initials;
+        });
+    </script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bs5-toast/1.0.0/bs5-toast.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bs5-modal/1.0.0/bs5-modal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bs5-tooltip/1.0.0/bs5-tooltip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bs5-popover/1.0.0/bs5-popover.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bs5-dropdown/1.0.0/bs5-dropdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bs5-collapse/1.0.0/bs5-collapse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bs5-accordion/1.0.0/bs5-accordion.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bs5-carousel/1.0.0/bs5-carousel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bs5-tooltip/1.0.0/bs5-tooltip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bs5-popover/1.0.0/bs5-popover.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bs5-dropdown/1.0.0/bs5-dropdown.min.js"></script>
+</body>
+</html>

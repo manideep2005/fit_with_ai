@@ -1075,7 +1075,7 @@
                 Next <i class="fas fa-arrow-right"></i>
             </button>
             <button type="button" id="submitBtn" class="btn btn-success" style="display: none;">
-                <i class="fas fa-check"></i> Complete Assessment
+                <i class="fas fa-check"></i> Finished
             </button>
         </div>
     </div>
@@ -1155,26 +1155,23 @@
                     return;
                 }
 
-                // Collect form data
-                const formData = {
-                    age: document.getElementById('age').value,
-                    gender: document.getElementById('gender').value,
-                    height: document.getElementById('height').value,
-                    weight: document.getElementById('weight').value,
-                    fitnessGoals: Array.from(document.querySelectorAll('.goals-grid .condition-item.selected'))
-                        .map(item => item.dataset.value)
-                        .join(', '),
-                    medicalConditions: Array.from(document.querySelectorAll('.conditions-grid .condition-item.selected'))
-                        .map(item => item.dataset.value)
-                        .join(', '),
-                    activityLevel: document.querySelector('.activity-level .rating-item.selected')?.dataset.value || '',
-                    dietaryPreferences: Array.from(document.querySelectorAll('.dietary-grid .condition-item.selected'))
-                        .map(item => item.dataset.value)
-                        .join(', ')
-                };
-
                 try {
-                    const response = await fetch('/onboarding', {
+                    // Collect form data
+                    const formData = {
+                        age: document.getElementById('age').value,
+                        gender: document.getElementById('gender').value,
+                        height: document.getElementById('height').value,
+                        weight: document.getElementById('weight').value,
+                        fitnessGoals: Array.from(document.querySelectorAll('.conditions-grid[data-field="fitnessGoal"] .condition-item.selected'))
+                            .map(item => item.dataset.value)
+                            .join(', '),
+                        medicalConditions: Array.from(document.querySelectorAll('.conditions-grid[data-field="medicalConditions"] .condition-item.selected'))
+                            .map(item => item.dataset.value)
+                            .join(', '),
+                        activityLevel: document.querySelector('.rating-scale[data-field="fitnessLevel"] .rating-item.selected')?.dataset.value || ''
+                    };
+
+                    const response = await fetch('/CustomOnboarding', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1188,7 +1185,7 @@
                         // Show success message
                         alert('Assessment completed successfully!');
                         // Redirect to dashboard
-                        window.location.href = result.redirectUrl;
+                        window.location.href = result.redirectTo || '/dashboard';
                     } else {
                         alert(result.error || 'Error saving assessment data');
                     }

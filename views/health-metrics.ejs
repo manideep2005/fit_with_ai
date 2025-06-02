@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitWit AI - Health Metrics</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <!-- Add Chart.js for metrics visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100">
+    <%- include('partials/sidebar') %>
+    
+    <div class="p-4 sm:ml-64">
+        <div class="p-4 border-2 border-gray-200 rounded-lg">
+            <div class="mb-6">
+                <h1 class="text-3xl font-semibold text-gray-800">Health Metrics</h1>
+                <p class="text-gray-600">Track your health and fitness progress</p>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Weight</h3>
+                    <div class="flex items-center justify-between">
+                        <span class="text-3xl font-bold text-teal-500">75.5</span>
+                        <span class="text-gray-500">kg</span>
+                    </div>
+                    <p class="text-sm text-green-500 mt-2">↓ 0.5 kg this week</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">BMI</h3>
+                    <div class="flex items-center justify-between">
+                        <span class="text-3xl font-bold text-blue-500">22.4</span>
+                        <span class="text-gray-500">Normal</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">Healthy range: 18.5-24.9</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Body Fat %</h3>
+                    <div class="flex items-center justify-between">
+                        <span class="text-3xl font-bold text-green-500">18.5</span>
+                        <span class="text-gray-500">%</span>
+                    </div>
+                    <p class="text-sm text-green-500 mt-2">↓ 0.3% this month</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2">Resting HR</h3>
+                    <div class="flex items-center justify-between">
+                        <span class="text-3xl font-bold text-red-500">68</span>
+                        <span class="text-gray-500">bpm</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">Good resting heart rate</p>
+                </div>
+            </div>
+
+            <!-- Progress Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Weight Progress Chart -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold mb-4">Weight Progress</h2>
+                    <canvas id="weightChart" width="400" height="200"></canvas>
+                </div>
+
+                <!-- Body Measurements -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold mb-4">Body Measurements</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-gray-600">Chest</label>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xl font-semibold">42</span>
+                                <span class="text-sm text-gray-500">inches</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-teal-500 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-gray-600">Waist</label>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xl font-semibold">32</span>
+                                <span class="text-sm text-gray-500">inches</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-teal-500 h-2 rounded-full" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-gray-600">Arms</label>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xl font-semibold">14</span>
+                                <span class="text-sm text-gray-500">inches</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-teal-500 h-2 rounded-full" style="width: 70%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Goals -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold">Health Goals</h2>
+                    <button class="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600">
+                        Update Goals
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="border rounded-lg p-4">
+                        <h3 class="font-semibold text-lg mb-2">Target Weight</h3>
+                        <p class="text-3xl font-bold text-teal-500">70<span class="text-sm text-gray-500 ml-1">kg</span></p>
+                        <p class="text-sm text-gray-500 mt-2">5.5 kg to go</p>
+                    </div>
+                    <div class="border rounded-lg p-4">
+                        <h3 class="font-semibold text-lg mb-2">Body Fat Goal</h3>
+                        <p class="text-3xl font-bold text-teal-500">15<span class="text-sm text-gray-500 ml-1">%</span></p>
+                        <p class="text-sm text-gray-500 mt-2">3.5% to go</p>
+                    </div>
+                    <div class="border rounded-lg p-4">
+                        <h3 class="font-semibold text-lg mb-2">Weekly Activity</h3>
+                        <p class="text-3xl font-bold text-teal-500">5<span class="text-sm text-gray-500 ml-1">days</span></p>
+                        <p class="text-sm text-gray-500 mt-2">3 days completed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for weight progress chart
+        const ctx = document.getElementById('weightChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Weight (kg)',
+                    data: [78, 77.5, 76.8, 76.2, 75.8, 75.5],
+                    borderColor: '#14b8a6',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

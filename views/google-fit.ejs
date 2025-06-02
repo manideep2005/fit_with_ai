@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitWit AI - Google Fit Integration</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-gray-100">
+    <%- include('partials/sidebar') %>
+    
+    <div class="p-4 sm:ml-64">
+        <div class="p-4 border-2 border-gray-200 rounded-lg">
+            <div class="mb-6">
+                <h1 class="text-3xl font-semibold text-gray-800">Google Fit Integration</h1>
+                <p class="text-gray-600">Connect and sync your fitness data with Google Fit</p>
+            </div>
+
+            <!-- Connection Status -->
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-semibold mb-2">Connection Status</h2>
+                        <p class="text-gray-600">Your Google Fit account is currently connected</p>
+                    </div>
+                    <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                        Disconnect
+                    </button>
+                </div>
+                <div class="mt-4">
+                    <p class="text-sm text-gray-500">Last synced: Today at 2:30 PM</p>
+                </div>
+            </div>
+
+            <!-- Sync Data -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold">Steps</h3>
+                        <span class="text-3xl font-bold text-teal-500">8,547</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div class="bg-teal-500 h-2.5 rounded-full" style="width: 85%"></div>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">Goal: 10,000 steps</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold">Active Minutes</h3>
+                        <span class="text-3xl font-bold text-blue-500">45</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div class="bg-blue-500 h-2.5 rounded-full" style="width: 75%"></div>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">Goal: 60 minutes</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold">Heart Points</h3>
+                        <span class="text-3xl font-bold text-red-500">67</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div class="bg-red-500 h-2.5 rounded-full" style="width: 90%"></div>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">Goal: 75 points</p>
+                </div>
+            </div>
+
+            <!-- Activity Timeline -->
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-2xl font-semibold mb-4">Today's Activity</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center p-4 border rounded-lg">
+                        <div class="flex-shrink-0 h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <svg class="h-6 w-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold">Morning Walk</h3>
+                            <p class="text-gray-600">30 minutes • 2,500 steps • 15 heart points</p>
+                            <p class="text-sm text-gray-500">7:00 AM - 7:30 AM</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center p-4 border rounded-lg">
+                        <div class="flex-shrink-0 h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
+                            <svg class="h-6 w-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold">Workout Session</h3>
+                            <p class="text-gray-600">45 minutes • 52 heart points</p>
+                            <p class="text-sm text-gray-500">2:00 PM - 2:45 PM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sync Settings -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold mb-4">Sync Settings</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold">Auto-sync</h3>
+                                <p class="text-sm text-gray-500">Automatically sync data every hour</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold">Sync Notifications</h3>
+                                <p class="text-sm text-gray-500">Get notified when sync completes</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="font-semibold mb-2">Data to Sync</h3>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-teal-600" checked>
+                                    <span class="ml-2 text-gray-700">Steps</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-teal-600" checked>
+                                    <span class="ml-2 text-gray-700">Heart Rate</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-teal-600" checked>
+                                    <span class="ml-2 text-gray-700">Active Minutes</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="form-checkbox h-5 w-5 text-teal-600" checked>
+                                    <span class="ml-2 text-gray-700">Sleep Data</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+</body>
+</html> 

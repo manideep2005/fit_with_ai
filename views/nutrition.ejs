@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitWit AI - Nutrition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/nutrition.css">
+</head>
+<body>
+    <%- include('partials/sidebar') %>
+    
+    <div class="main-content">
+        <div class="header">
+            <h1>Nutrition Tracker</h1>
+            <p>Track your daily nutrition and optimize your health journey</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card calories">
+                <div class="stat-header">
+                    <div class="stat-title">Calories</div>
+                </div>
+                <div class="stat-values">
+                    <div class="stat-current">1,200</div>
+                    <div class="stat-target">/ 2,000</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 60%"></div>
+                </div>
+            </div>
+
+            <div class="stat-card protein">
+                <div class="stat-header">
+                    <div class="stat-title">Protein</div>
+                </div>
+                <div class="stat-values">
+                    <div class="stat-current">45g</div>
+                    <div class="stat-target">/ 80g</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 56%"></div>
+                </div>
+            </div>
+
+            <div class="stat-card carbs">
+                <div class="stat-header">
+                    <div class="stat-title">Carbs</div>
+                </div>
+                <div class="stat-values">
+                    <div class="stat-current">120g</div>
+                    <div class="stat-target">/ 250g</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 48%"></div>
+                </div>
+            </div>
+
+            <div class="stat-card fats">
+                <div class="stat-header">
+                    <div class="stat-title">Fats</div>
+                </div>
+                <div class="stat-values">
+                    <div class="stat-current">35g</div>
+                    <div class="stat-target">/ 65g</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 54%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="meals-section">
+            <div class="section-header">
+                <h2 class="section-title">Today's Meals</h2>
+                <div class="header-actions">
+                    <button class="add-btn">Add Meal</button>
+                    <button class="email-btn" id="sendNutritionReport">
+                        <i class="fas fa-envelope"></i>
+                        Email Report
+                    </button>
+                </div>
+            </div>
+            <div class="meals-grid">
+                <div class="meal-card">
+                    <h3 class="meal-title">Breakfast</h3>
+                    <ul class="meal-items">
+                        <li class="meal-item">Oatmeal - 150 cal</li>
+                        <li class="meal-item">Banana - 105 cal</li>
+                        <li class="meal-item">Greek Yogurt - 130 cal</li>
+                    </ul>
+                </div>
+                
+                <div class="meal-card">
+                    <h3 class="meal-title">Lunch</h3>
+                    <ul class="meal-items">
+                        <li class="meal-item">Chicken Salad - 320 cal</li>
+                        <li class="meal-item">Whole Grain Bread - 180 cal</li>
+                    </ul>
+                </div>
+                
+                <div class="meal-card">
+                    <h3 class="meal-title">Dinner</h3>
+                    <ul class="meal-items">
+                        <li class="meal-item">Not logged yet</li>
+                    </ul>
+                </div>
+                
+                <div class="meal-card">
+                    <h3 class="meal-title">Snacks</h3>
+                    <ul class="meal-items">
+                        <li class="meal-item">Almonds - 160 cal</li>
+                        <li class="meal-item">Apple - 95 cal</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="tips-section">
+            <h2 class="section-title">Nutrition Tips</h2>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <h3 class="tip-title">Stay Hydrated</h3>
+                    <p class="tip-content">Remember to drink at least 8 glasses of water daily to maintain optimal hydration and support your metabolism.</p>
+                </div>
+                <div class="tip-card">
+                    <h3 class="tip-title">Protein Intake</h3>
+                    <p class="tip-content">Aim for 0.8-1g of protein per pound of body weight to support muscle growth and recovery.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/nutrition.js"></script>
+</body>
+</html> 
