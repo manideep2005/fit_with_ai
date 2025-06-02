@@ -16,6 +16,24 @@
     ],
     "routes": [
         {
+            "src": "/api/test-email",
+            "dest": "/api/test-email.js",
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type"
+            }
+        },
+        {
+            "src": "/api/debug-env",
+            "dest": "/api/debug-env.js",
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type"
+            }
+        },
+        {
             "src": "/js/(.*)",
             "dest": "/public/js/$1"
         },
@@ -34,14 +52,6 @@
         {
             "src": "/test-email",
             "dest": "/public/test-email.html"
-        },
-        {
-            "src": "/api/test-email",
-            "dest": "/api/test-email.js"
-        },
-        {
-            "src": "/api/debug-env",
-            "dest": "/api/debug-env.js"
         },
         {
             "handle": "filesystem"
