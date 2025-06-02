@@ -15,6 +15,9 @@ require('dotenv').config();
 
 const app = express();
 
+// Add this after the other requires at the top
+const registeredEmails = new Set(['test@example.com']); // Pre-add test email
+
 // Debug route for environment variables (development only)
 if (process.env.NODE_ENV === 'development') {
     app.get('/debug-env', (req, res) => {
@@ -491,6 +494,20 @@ app.post('/signup', async (req, res) => {
                 redirectTo: '/'
             });
         }
+
+        // Check if email already exists
+        if (registeredEmails.has(email)) {
+            console.log('❌ Email already exists:', email);
+            return res.status(400).json({
+                success: false,
+                error: 'This email is already registered. Please sign in instead.',
+                isExistingUser: true,
+                redirectTo: '/?signin=true'
+            });
+        }
+
+        // Add email to registered set
+        registeredEmails.add(email);
 
         // Create new session
         req.session = {

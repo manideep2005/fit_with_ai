@@ -135,6 +135,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.success) {
                 window.location.href = data.redirectTo;
             } else {
+                if (data.isExistingUser) {
+                    // Switch to sign in tab
+                    const signInTab = document.querySelector('[data-tab="signin"]');
+                    if (signInTab) {
+                        signInTab.click();
+                    }
+                    // Pre-fill the email in login form
+                    const loginEmail = document.getElementById('loginEmail');
+                    if (loginEmail) {
+                        loginEmail.value = document.getElementById('signupEmail').value;
+                    }
+                }
                 alert(data.error || 'Signup failed');
                 if (data.redirectTo) {
                     window.location.href = data.redirectTo;

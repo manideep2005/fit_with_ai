@@ -117,7 +117,7 @@ const sendWelcomeEmail = async (userEmail, userName) => {
 
                             <div style="margin: 30px 0; text-align: center;">
                                 <h3 style="color: #4ecdc4; margin-bottom: 20px;">Key Features</h3>
-                                <img src="${appUrl}/images/features-overview.png" alt="FitWit AI Features" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                <img src="${any}Screenshot 2025-06-02 at 12.00.00 AM.png" alt="FitWit AI Features" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                             </div>
 
                             <div style="margin-top: 30px; text-align: center;">
