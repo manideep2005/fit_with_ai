@@ -554,35 +554,48 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-// Update custom onboarding routes to be consistent
+// Custom onboarding route
 app.get('/custom-onboarding', (req, res) => {
     try {
+        console.log('GET /custom-onboarding - Session:', req.session);
+        
         // Check if user is logged in
         if (!req.session.userData) {
+            console.log('User not logged in, redirecting to /')
             return res.redirect('/');
         }
+        
         // If already onboarded, go to dashboard
         if (req.session.userData.isOnboarded) {
+            console.log('User already onboarded, redirecting to dashboard');
             return res.redirect('/dashboard');
         }
+        
         // Show onboarding only for logged-in, non-onboarded users
+        console.log('Rendering custom-onboarding page');
         res.render('custom-onboarding', { 
             user: req.session.userData,
             error: req.query.error
         });
     } catch (error) {
         console.error('Onboarding error:', error);
-        res.status(500).json({ error: 'Error rendering onboarding page' });
+        res.status(500).json({ 
+            error: 'Error rendering onboarding page',
+            details: error.message 
+        });
     }
 });
 
-// Update route to be lowercase and consistent
 app.post('/custom-onboarding', requireAuth, async (req, res) => {
     try {
+        console.log('POST /custom-onboarding - Body:', req.body);
+        console.log('Session:', req.session);
+        
         const { age, gender, height, weight, fitnessGoals, medicalConditions, activityLevel } = req.body;
         
         // Validate required fields
         if (!age || !gender || !height || !weight) {
+            console.log('Missing required fields');
             return res.status(400).json({ 
                 success: false, 
                 error: 'Required fields are missing' 
@@ -604,8 +617,16 @@ app.post('/custom-onboarding', requireAuth, async (req, res) => {
             }
         };
 
-        // Generate and send PDF
-        await generateAndSendPDF(req.session.userData, req.session.userData.email);
+        console.log('Updated session:', req.session);
+
+        try {
+            // Generate and send PDF
+            await generateAndSendPDF(req.session.userData, req.session.userData.email);
+            console.log('PDF generated and sent successfully');
+        } catch (pdfError) {
+            console.error('PDF generation error:', pdfError);
+            // Continue even if PDF fails
+        }
 
         // Send success response with redirect URL
         return res.json({ 
@@ -616,7 +637,8 @@ app.post('/custom-onboarding', requireAuth, async (req, res) => {
         console.error('Onboarding save error:', error);
         res.status(500).json({ 
             success: false, 
-            error: 'Internal server error' 
+            error: 'Internal server error',
+            details: error.message
         });
     }
 });

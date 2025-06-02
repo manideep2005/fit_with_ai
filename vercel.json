@@ -24,6 +24,16 @@
             "dest": "/public/videos/$1"
         },
         {
+            "src": "/custom-onboarding",
+            "methods": ["GET"],
+            "dest": "/server.js"
+        },
+        {
+            "src": "/custom-onboarding",
+            "methods": ["POST"],
+            "dest": "/server.js"
+        },
+        {
             "src": "/",
             "dest": "/server.js"
         },
@@ -33,10 +43,6 @@
         },
         {
             "src": "/signup",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/custom-onboarding",
             "dest": "/server.js"
         },
         {
