@@ -17,11 +17,11 @@ const createTransporter = () => {
             port: 465,
             secure: true,
             auth: {
-                user: process.env.SMTP_USER || 'manideepgonugunta2005@gmail.com',
-                pass: process.env.SMTP_PASS ||  'sxpbzvbyiphxljph',
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS
             },
             tls: {
-                rejectUnauthorized: false
+                rejectUnauthorized: true
             }
         });
 
@@ -257,5 +257,5 @@ module.exports = {
     sendAssessmentCompletionEmail,
     initializeEmailService,
     createTransporter
-}; 
+};
 

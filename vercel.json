@@ -64,14 +64,11 @@
     "env": {
         "NODE_ENV": "production",
         "BASE_URL": "https://fit-with-6g5s8oroy-gonugunta-manideeps-projects.vercel.app",
-        "APP_URL": "https://fit-with-6g5s8oroy-gonugunta-manideeps-projects.vercel.app",
-        "SESSION_SECRET": "temporary-session-secret-key-12345",
-        "SMTP_USER": "manideepgonugunta2005@gmail.com",
-        "SMTP_PASS": "sxpbzvbyiphxljph"
+        "APP_URL": "https://fit-with-6g5s8oroy-gonugunta-manideeps-projects.vercel.app"
     },
     "regions": ["bom1"],
     "public": true,
     "github": {
         "silent": true
     }
-} 
+}
