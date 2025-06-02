@@ -13,16 +13,16 @@ const createTransporter = () => {
         console.log('📧 SMTP Pass:', process.env.SMTP_PASS ? '✅ Set' : '❌ Missing');
 
         transporter = nodemailer.createTransport({
+            service: 'gmail',
             host: 'smtp.gmail.com',
             port: 465,
             secure: true,
             auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS
+                user: process.env.SMTP_USER || 'manideepgonugunta2005@gmail.com',
+                pass: process.env.SMTP_PASS || 'sxpbzvbyiphxljph'
             },
-            tls: {
-                rejectUnauthorized: true
-            }
+            debug: true, // Enable debug logging
+            logger: true // Enable built-in logger
         });
 
         console.log('✅ Email transporter created successfully');
@@ -61,6 +61,12 @@ const verifyConnection = async () => {
             return true;
         } catch (error) {
             console.error(`❌ SMTP connection error (attempt ${attempt}/${maxRetries}):`, error);
+            console.error('Error details:', {
+                code: error.code,
+                command: error.command,
+                response: error.response,
+                responseCode: error.responseCode
+            });
             if (attempt < maxRetries) {
                 const delay = attempt * 1000;
                 console.log(`⏳ Waiting ${delay}ms before retry...`);
@@ -82,11 +88,9 @@ const sendWelcomeEmail = async (userEmail, userName) => {
     const maxRetries = 3;
     let lastError = null;
 
-    // Get the app URL from environment or default to localhost
-    const appUrl = process.env.APP_URL || 'http://localhost:3000';
-
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
+            console.log(`📧 Attempt ${attempt}: Preparing to send welcome email...`);
             const mailOptions = {
                 from: {
                     name: 'FitWit AI',
@@ -115,11 +119,6 @@ const sendWelcomeEmail = async (userEmail, userName) => {
                                 </ul>
                             </div>
 
-                            <div style="margin: 30px 0; text-align: center;">
-                                <h3 style="color: #4ecdc4; margin-bottom: 20px;">Key Features</h3>
-                                <img src="${any}Screenshot 2025-06-02 at 12.00.00 AM.png" alt="FitWit AI Features" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                            </div>
-
                             <div style="margin-top: 30px; text-align: center;">
                                 <h3 style="color: #4ecdc4;">Our Core Features:</h3>
                                 <div style="display: inline-block; text-align: left;">
@@ -143,11 +142,19 @@ const sendWelcomeEmail = async (userEmail, userName) => {
                 `
             };
 
+            console.log(`📧 Attempt ${attempt}: Sending welcome email to:`, userEmail);
             const info = await transporter.sendMail(mailOptions);
             console.log('✅ Welcome email sent successfully:', info.messageId);
+            console.log('📬 Preview URL:', nodemailer.getTestMessageUrl(info));
             return { success: true, messageId: info.messageId };
         } catch (error) {
             console.error(`❌ Attempt ${attempt} failed:`, error);
+            console.error('Error details:', {
+                code: error.code,
+                command: error.command,
+                response: error.response,
+                responseCode: error.responseCode
+            });
             lastError = error;
             
             if (attempt < maxRetries) {
@@ -177,6 +184,7 @@ const sendAssessmentCompletionEmail = async (userEmail, userName, mailOptions = 
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
+            console.log(`📧 Attempt ${attempt}: Preparing to send assessment email...`);
             // Use provided mail options or create default ones
             const emailOptions = mailOptions || {
                 from: {
@@ -186,46 +194,34 @@ const sendAssessmentCompletionEmail = async (userEmail, userName, mailOptions = 
                 to: userEmail,
                 subject: '🎉 Your FitWit AI Assessment is Complete!',
                 html: `
-                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                        <div style="background-color: #4ecdc4; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
-                            <h1 style="margin: 0;">Assessment Complete!</h1>
-                            <p style="margin: 10px 0 0 0; opacity: 0.9;">Your personalized fitness journey awaits</p>
-                        </div>
-                        
-                        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                            <h2 style="color: #4ecdc4; margin-top: 0;">Hello ${userName},</h2>
-                            <p>Thank you for completing your fitness assessment! We've created your personalized plan.</p>
-                            
-                            <div style="background-color: white; padding: 20px; border-radius: 5px; margin: 20px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                                <h3 style="color: #4ecdc4; margin-top: 0;">Your Next Steps:</h3>
-                                <ul style="padding-left: 20px; line-height: 1.6;">
-                                    <li>Review your personalized workout plan</li>
-                                    <li>Set up your workout schedule</li>
-                                    <li>Start your first workout session</li>
-                                    <li>Track your progress</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <div style="text-align: center; margin-top: 20px; color: #6c757d;">
-                            <p style="margin: 5px 0;">Let's achieve your fitness goals together!</p>
-                            <small style="opacity: 0.7;">© ${new Date().getFullYear()} Fit With AI. All rights reserved.</small>
-                        </div>
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                        <h2 style="color: #4ecdc4;">Congratulations ${userName}! 🎉</h2>
+                        <p>Your fitness assessment is complete and we've created a personalized plan for you.</p>
+                        <p>Check your dashboard to:</p>
+                        <ul>
+                            <li>View your personalized workout plan</li>
+                            <li>Track your progress</li>
+                            <li>Get nutrition recommendations</li>
+                            <li>Connect with fitness experts</li>
+                        </ul>
+                        <p>Let's achieve your fitness goals together!</p>
                     </div>
                 `
             };
 
-            console.log('Sending assessment email with options:', {
-                to: emailOptions.to,
-                subject: emailOptions.subject,
-                hasAttachments: !!emailOptions.attachments
-            });
-
+            console.log(`📧 Attempt ${attempt}: Sending assessment email to:`, userEmail);
             const info = await transporter.sendMail(emailOptions);
-            console.log('✅ Assessment completion email sent successfully:', info.messageId);
+            console.log('✅ Assessment email sent successfully:', info.messageId);
+            console.log('📬 Preview URL:', nodemailer.getTestMessageUrl(info));
             return { success: true, messageId: info.messageId };
         } catch (error) {
             console.error(`❌ Attempt ${attempt} failed:`, error);
+            console.error('Error details:', {
+                code: error.code,
+                command: error.command,
+                response: error.response,
+                responseCode: error.responseCode
+            });
             lastError = error;
             
             if (attempt < maxRetries) {

@@ -20,8 +20,13 @@
             "dest": "/api/test-email.js",
             "headers": {
                 "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type"
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
+                "Access-Control-Allow-Credentials": "true",
+                "Cache-Control": "no-store, no-cache, must-revalidate",
+                "X-Frame-Options": "DENY",
+                "X-Content-Type-Options": "nosniff",
+                "Referrer-Policy": "strict-origin-when-cross-origin"
             }
         },
         {
@@ -29,8 +34,9 @@
             "dest": "/api/debug-env.js",
             "headers": {
                 "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-                "Access-Control-Allow-Headers": "Content-Type"
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
+                "Access-Control-Allow-Credentials": "true"
             }
         },
         {
@@ -58,13 +64,26 @@
         },
         {
             "src": "/(.*)",
-            "dest": "/server.js"
+            "dest": "/server.js",
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
+                "Access-Control-Allow-Credentials": "true",
+                "Cache-Control": "no-store, no-cache, must-revalidate",
+                "X-Frame-Options": "DENY",
+                "X-Content-Type-Options": "nosniff",
+                "Referrer-Policy": "strict-origin-when-cross-origin"
+            }
         }
     ],
     "env": {
         "NODE_ENV": "production",
         "BASE_URL": "https://fit-with-6g5s8oroy-gonugunta-manideeps-projects.vercel.app",
-        "APP_URL": "https://fit-with-6g5s8oroy-gonugunta-manideeps-projects.vercel.app"
+        "APP_URL": "https://fit-with-6g5s8oroy-gonugunta-manideeps-projects.vercel.app",
+        "SESSION_SECRET": "temporary-session-secret-key-12345",
+        "SMTP_USER": "manideepgonugunta2005@gmail.com",
+        "SMTP_PASS": "sxpbzvbyiphxljph"
     },
     "regions": ["bom1"],
     "public": true,
