@@ -2,18 +2,20 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 // Create transporter object using Gmail SMTP
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-        user: process.env.SMTP_USER || 'fitwitai18@gmail.com',
-        pass: process.env.SMTP_PASS || 'zjmqcqmgcfszsmz'
-    },
-    tls: {
-        rejectUnauthorized: false
-    }
-});
+const createTransporter = () => {
+    return nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS
+        },
+        tls: {
+            rejectUnauthorized: false
+        }
+    });
+};
 
 // Verify connection configuration with retries
 const verifyConnection = async () => {
@@ -25,7 +27,7 @@ const verifyConnection = async () => {
     const maxRetries = 3;
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-            await transporter.verify();
+            await createTransporter().verify();
             console.log('✅ SMTP connection verified and ready');
             return true;
         } catch (error) {
@@ -56,10 +58,11 @@ const sendWelcomeEmail = async (userEmail, userName) => {
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
+            const transporter = createTransporter();
             const mailOptions = {
                 from: {
                     name: 'FitWit AI',
-                    address: process.env.SMTP_USER || 'fitwitai18@gmail.com'
+                    address: process.env.SMTP_USER
                 },
                 to: userEmail,
                 subject: '🏋️‍♂️ Welcome to Fit With AI - Your Personal Fitness Journey Begins!',
@@ -118,10 +121,11 @@ const sendAssessmentCompletionEmail = async (userEmail, userName, assessmentData
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
+            const transporter = createTransporter();
             const mailOptions = {
                 from: {
                     name: 'FitWit AI',
-                    address: process.env.SMTP_USER || 'fitwitai18@gmail.com'
+                    address: process.env.SMTP_USER
                 },
                 to: userEmail,
                 subject: '🎉 Your FitWit AI Assessment is Complete!',
@@ -176,6 +180,6 @@ const sendAssessmentCompletionEmail = async (userEmail, userName, assessmentData
 module.exports = {
     sendWelcomeEmail,
     sendAssessmentCompletionEmail,
-    transporter
+    createTransporter
 }; 
 

@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
         {
-            "src": "server.js",
+            "src": "api/index.js",
             "use": "@vercel/node"
         }
     ],
@@ -27,69 +27,16 @@
             "handle": "filesystem"
         },
         {
-            "src": "/",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/ws",
-            "dest": "/server.js",
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
-                "Access-Control-Allow-Credentials": "true"
-            }
-        },
-        {
-            "src": "/custom-onboarding",
-            "methods": ["GET", "POST"],
-            "dest": "/server.js",
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
-                "Access-Control-Allow-Credentials": "true"
-            }
-        },
-        {
-            "src": "/(dashboard|workouts|nutrition|health-metrics|meal-suggestions|google-fit|doctor-consult|settings|logout|health)",
-            "dest": "/server.js",
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
-                "Access-Control-Allow-Credentials": "true"
-            }
-        },
-        {
-            "src": "/(login|signup)",
-            "dest": "/server.js",
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
-                "Access-Control-Allow-Credentials": "true"
-            }
-        },
-        {
             "src": "/(.*)",
-            "dest": "/server.js",
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
-                "Access-Control-Allow-Credentials": "true",
-                "Cache-Control": "no-store, no-cache, must-revalidate",
-                "X-Frame-Options": "DENY",
-                "X-Content-Type-Options": "nosniff",
-                "Referrer-Policy": "strict-origin-when-cross-origin"
-            }
+            "dest": "/api/index.js"
         }
     ],
     "env": {
         "NODE_ENV": "production",
-        "BASE_URL": "https://fit-with-nhjhqivpd-gonugunta-manideeps-projects.vercel.app",
-        "SESSION_SECRET": "your-secret-key-for-production",
+        "BASE_URL": "https://fit-with-ai.vercel.app",
+        "SESSION_SECRET": "@session_secret",
+        "SMTP_USER": "@smtp_user",
+        "SMTP_PASS": "@smtp_pass",
         "VERCEL": "1"
     },
     "regions": ["bom1"],
