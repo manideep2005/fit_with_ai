@@ -27,6 +27,10 @@
             "handle": "filesystem"
         },
         {
+            "src": "/",
+            "dest": "/server.js"
+        },
+        {
             "src": "/ws",
             "dest": "/server.js",
             "headers": {
@@ -58,7 +62,7 @@
             }
         },
         {
-            "src": "/(login|signup|)",
+            "src": "/(login|signup)",
             "dest": "/server.js",
             "headers": {
                 "Access-Control-Allow-Origin": "*",
@@ -84,7 +88,7 @@
     ],
     "env": {
         "NODE_ENV": "production",
-        "BASE_URL": "https://fit-with-ai.vercel.app",
+        "BASE_URL": "https://fit-with-nhjhqivpd-gonugunta-manideeps-projects.vercel.app",
         "SESSION_SECRET": "your-secret-key-for-production",
         "VERCEL": "1"
     },
