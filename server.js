@@ -18,6 +18,15 @@ const testRoutes = require('./api/test');
 
 const app = express();
 
+// Middleware setup
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
+
 // Add this after the other requires at the top
 const registeredEmails = new Set(['test@example.com']); // Pre-add test email
 
@@ -995,11 +1004,16 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Start the server
+// Mount test-email route
+const testEmailRoute = require('./api/test-email');
+app.use('/api/test-email', testEmailRoute);
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+
+// Start the server
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on http://0.0.0.0:${PORT}`);
 });
 
 // Export the Express app
-module.exports = app; 
+module.exports = app;
