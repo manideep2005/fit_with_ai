@@ -4,10 +4,6 @@
         {
             "src": "server.js",
             "use": "@vercel/node"
-        },
-        {
-            "src": "public/**",
-            "use": "@vercel/static"
         }
     ],
     "routes": [
@@ -28,25 +24,8 @@
             "dest": "/public/videos/$1"
         },
         {
-            "src": "/CustomOnboarding",
-            "dest": "/server.js",
-            "headers": {
-                "Cache-Control": "no-store, no-cache, must-revalidate"
-            }
-        },
-        {
-            "src": "/dashboard",
-            "dest": "/server.js",
-            "headers": {
-                "Cache-Control": "no-store, no-cache, must-revalidate"
-            }
-        },
-        {
             "src": "/(.*)",
-            "dest": "/server.js",
-            "headers": {
-                "Cache-Control": "no-store, no-cache, must-revalidate"
-            }
+            "dest": "/server.js"
         }
     ],
     "env": {

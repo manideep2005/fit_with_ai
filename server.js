@@ -10,6 +10,12 @@ require('dotenv').config();
 
 const app = express();
 
+// Production settings
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+    app.enable('trust proxy');
+}
+
 // Create transporter object using Gmail SMTP
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -362,10 +368,12 @@ function getRecommendations(activityLevel) {
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files - more explicit configuration
+app.use('/js', express.static(path.join(__dirname, 'public/js')));
 app.use('/css', express.static(path.join(__dirname, 'public/css')));
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
+app.use('/videos', express.static(path.join(__dirname, 'public/videos')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -378,8 +386,11 @@ app.use(session({
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        sameSite: 'lax',
+        domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined
+    },
+    proxy: process.env.NODE_ENV === 'production'
 }));
 
 // Authentication middleware
