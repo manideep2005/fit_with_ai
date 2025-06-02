@@ -82,6 +82,9 @@ const sendWelcomeEmail = async (userEmail, userName) => {
     const maxRetries = 3;
     let lastError = null;
 
+    // Get the app URL from environment or default to localhost
+    const appUrl = process.env.APP_URL || 'http://localhost:3000';
+
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
             const mailOptions = {
@@ -110,6 +113,25 @@ const sendWelcomeEmail = async (userEmail, userName) => {
                                     <li>Track your progress</li>
                                     <li>Connect with fitness experts</li>
                                 </ul>
+                            </div>
+
+                            <div style="margin: 30px 0; text-align: center;">
+                                <h3 style="color: #4ecdc4; margin-bottom: 20px;">Key Features</h3>
+                                <img src="${appUrl}/images/features-overview.png" alt="FitWit AI Features" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                            </div>
+
+                            <div style="margin-top: 30px; text-align: center;">
+                                <h3 style="color: #4ecdc4;">Our Core Features:</h3>
+                                <div style="display: inline-block; text-align: left;">
+                                    <ul style="line-height: 1.8;">
+                                        <li><strong>Custom Onboarding:</strong> Personalized to your medical conditions</li>
+                                        <li><strong>Condition-Based Dashboards:</strong> Track what matters most to you</li>
+                                        <li><strong>Google Fit Integration:</strong> Real-time health data import</li>
+                                        <li><strong>Daily Summary:</strong> Smart reports with insights</li>
+                                        <li><strong>AI Meal Suggestions:</strong> Personalized nutrition planning</li>
+                                        <li><strong>General Tracking:</strong> Monitor all aspects of your fitness journey</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         

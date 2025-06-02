@@ -226,55 +226,51 @@
         .navigation-buttons {
             display: flex;
             justify-content: space-between;
-            margin-top: 40px;
-            gap: 20px;
+            margin-top: 20px;
+            padding: 20px;
         }
         .btn {
-            flex: 1;
-            padding: 15px 30px;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 1.2em;
-            border: none;
-            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
-        .btn:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        .btn:hover:before {
-            left: 100%;
-        }
-        .btn.btn-secondary {
-            background: linear-gradient(135deg, #6c757d, #5a6268);
+        .btn-primary {
+            background-color: #4ecdc4;
+            border-color: #4ecdc4;
             color: white;
         }
-        .btn.btn-secondary:disabled {
-            background: #e9ecef;
-            color: #6c757d;
-            cursor: not-allowed;
-        }
-        .btn.btn-primary {
-            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
             color: white;
         }
-        .btn.btn-success {
-            background: linear-gradient(135deg, #FF6B35, #F7931E);
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
             color: white;
         }
-        .download-btn {
-            background: linear-gradient(135deg, #17a2b8, #138496);
-            color: white;
+        .progress-container {
             margin-top: 20px;
+            padding: 0 20px;
+        }
+        .progress {
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .progress-bar {
+            background-color: #4ecdc4;
+            transition: width 0.3s ease;
+        }
+        .step-counter {
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .hidden {
+            display: none;
         }
         .completion-screen {
             text-align: center;
@@ -1057,7 +1053,7 @@
         </div>
         <!-- Navigation buttons -->
         <div class="navigation-buttons">
-            <button type="button" id="prevBtn" class="btn btn-secondary" style="display: none;">
+            <button type="button" id="prevBtn" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Previous
             </button>
             <button type="button" id="nextBtn" class="btn btn-primary">
@@ -1066,6 +1062,15 @@
             <button type="button" id="submitBtn" class="btn btn-success" style="display: none;">
                 <i class="fas fa-check"></i> Finished
             </button>
+        </div>
+        <!-- Progress bar -->
+        <div class="progress-container">
+            <div class="progress">
+                <div id="progressFill" class="progress-bar" role="progressbar" style="width: 0%"></div>
+            </div>
+            <div class="step-counter">
+                Step <span id="currentStep">1</span> of <%= totalSteps %>
+            </div>
         </div>
     </div>
     <script>

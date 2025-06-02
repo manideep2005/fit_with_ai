@@ -375,6 +375,7 @@ const requireAuth = (req, res, next) => {
     console.log('Auth check - Session:', req.session);
     if (!req.session || !req.session.userData) {
         console.log('No auth, redirecting to index');
+        req.session = null; // Clear any invalid session
         return res.redirect('/?error=auth_required');
     }
     next();
@@ -399,9 +400,10 @@ app.get('/', (req, res) => {
     try {
         console.log('Session data:', req.session);
         
-        // If no session exists, show index page
+        // If no session exists or session is invalid, show index page
         if (!req.session || !req.session.userData) {
             console.log('No session, showing index page');
+            req.session = null; // Clear any invalid session
             return res.render('index', { user: null });
         }
 
@@ -422,6 +424,7 @@ app.get('/', (req, res) => {
         return res.render('index', { user: null });
     } catch (error) {
         console.error('Error in root route:', error);
+        req.session = null; // Clear session on error
         res.status(500).json({ error: 'Error rendering page' });
     }
 });
@@ -430,24 +433,43 @@ app.get('/', (req, res) => {
 app.post('/login', (req, res) => {
     try {
         const { email, password } = req.body;
+        
+        // Clear any existing session first
+        req.session = null;
+
         // For testing purposes
         if (email === "test@example.com" && password === "password") {
-            req.session.userData = {
-                id: 1,
-                email: email,
-                fullName: "Test User",
-                isOnboarded: false
+            // Create new session
+            req.session = {
+                userData: {
+                    id: 1,
+                    email: email,
+                    fullName: "Test User",
+                    isOnboarded: false
+                }
             };
+            
+            console.log('Login successful, session created:', req.session);
+            
             return res.json({ 
                 success: true, 
                 redirectTo: '/custom-onboarding'
             });
         } else {
-            res.json({ success: false, error: 'Invalid credentials' });
+            console.log('Login failed: Invalid credentials');
+            return res.json({ 
+                success: false, 
+                error: 'Invalid credentials',
+                redirectTo: '/'
+            });
         }
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        req.session = null;
+        res.status(500).json({ 
+            error: 'Internal server error',
+            redirectTo: '/'
+        });
     }
 });
 
@@ -458,23 +480,29 @@ app.post('/signup', async (req, res) => {
         
         console.log('📝 Signup attempt:', { fullName, email });
         
+        // Clear any existing session first
+        req.session = null;
+        
         if (!fullName || !email || !password) {
             console.log('❌ Missing required fields:', { fullName: !!fullName, email: !!email, password: !!password });
             return res.status(400).json({ 
                 success: false, 
-                error: 'Missing required fields' 
+                error: 'Missing required fields',
+                redirectTo: '/'
             });
         }
 
-        // Create session
-        req.session.userData = {
-            id: Date.now(),
-            email: email,
-            fullName: fullName,
-            isOnboarded: false
+        // Create new session
+        req.session = {
+            userData: {
+                id: Date.now(),
+                email: email,
+                fullName: fullName,
+                isOnboarded: false
+            }
         };
 
-        console.log('✅ Session created:', req.session.userData);
+        console.log('✅ Session created:', req.session);
 
         // Send welcome email in background
         try {
@@ -487,6 +515,7 @@ app.post('/signup', async (req, res) => {
             }
         } catch (emailError) {
             console.error('❌ Welcome email error:', emailError);
+            // Continue even if email fails
         }
 
         res.json({ 
@@ -496,10 +525,12 @@ app.post('/signup', async (req, res) => {
         });
     } catch (error) {
         console.error('❌ Signup error:', error);
+        req.session = null;
         res.status(500).json({ 
             success: false, 
             error: 'Internal server error',
-            details: error.message 
+            details: error.message,
+            redirectTo: '/'
         });
     }
 });
@@ -512,6 +543,7 @@ app.get('/custom-onboarding', requireAuth, (req, res) => {
         // If not logged in, redirect to index
         if (!req.session || !req.session.userData) {
             console.log('No session in onboarding, redirecting to index');
+            req.session = null; // Clear any invalid session
             return res.redirect('/');
         }
 
@@ -525,10 +557,12 @@ app.get('/custom-onboarding', requireAuth, (req, res) => {
         console.log('Rendering onboarding page');
         res.render('custom-onboarding', { 
             user: req.session.userData,
-            error: req.query.error
+            error: req.query.error,
+            totalSteps: 8 // Add this to fix the progress bar
         });
     } catch (error) {
         console.error('Onboarding error:', error);
+        req.session = null; // Clear session on error
         res.redirect('/?error=onboarding_failed');
     }
 });
@@ -589,9 +623,52 @@ app.post('/custom-onboarding', requireAuth, async (req, res) => {
             // Generate and send PDF
             await generateAndSendPDF(req.session.userData, email);
             console.log('PDF generated and sent successfully');
-        } catch (pdfError) {
-            console.error('PDF generation error:', pdfError);
-            // Continue even if PDF fails
+
+            // Send assessment completion email
+            const fullName = `${firstName} ${lastName}`;
+            const mailOptions = {
+                from: {
+                    name: 'FitWit AI',
+                    address: process.env.SMTP_USER
+                },
+                to: email,
+                subject: '🎉 Your Fitness Assessment is Complete!',
+                html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                        <h2 style="color: #4ecdc4;">Congratulations ${fullName}! 🎉</h2>
+                        <p>Thank you for completing your comprehensive fitness assessment. We're excited to be part of your fitness journey!</p>
+                        <p>Here's what happens next:</p>
+                        <ol>
+                            <li>Review your personalized fitness plan (attached PDF)</li>
+                            <li>Access your dashboard to track your progress</li>
+                            <li>Start your customized workout routines</li>
+                            <li>Track your nutrition and health metrics</li>
+                        </ol>
+                        <p>Remember, consistency is key to achieving your fitness goals. We're here to support you every step of the way!</p>
+                        <div style="margin-top: 20px; padding: 15px; background-color: #f5f5f5; border-radius: 5px;">
+                            <p style="margin: 0;"><strong>Your Key Stats:</strong></p>
+                            <ul style="margin: 10px 0;">
+                                <li>Current Weight: ${weight} kg</li>
+                                <li>Target Weight: ${targetWeight} kg</li>
+                                <li>Activity Level: ${activityLevel}</li>
+                                <li>Primary Goals: ${fitnessGoals}</li>
+                            </ul>
+                        </div>
+                        <p style="margin-top: 20px;">Ready to begin? <a href="${process.env.APP_URL || 'http://localhost:3000'}/dashboard" style="color: #4ecdc4;">Visit your dashboard</a></p>
+                    </div>
+                `
+            };
+
+            const emailResult = await sendAssessmentCompletionEmail(email, fullName, mailOptions);
+            console.log('Assessment completion email result:', emailResult);
+
+            if (!emailResult.success) {
+                console.error('Assessment completion email failed:', emailResult.error);
+                // Continue even if email fails
+            }
+        } catch (error) {
+            console.error('Error in email/PDF generation:', error);
+            // Continue even if email/PDF fails
         }
 
         // Send success response with redirect URL
