@@ -38,21 +38,27 @@ app.use((req, res, next) => {
     next();
 });
 
-// Create transporter object using Gmail SMTP
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-        user: process.env.SMTP_USER || 'fitwitai18@gmail.com',
-        pass: process.env.SMTP_PASS || 'zjmqcqmgcfszsmz'
-    }
-});
+// Create transporter object using Gmail SMTP only if credentials are available
+let transporter = null;
+
+if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+    transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS
+        }
+    });
+} else {
+    console.warn('⚠️ Email functionality disabled - missing SMTP credentials');
+}
 
 // Verify connection configuration with retries
 const verifyConnection = async () => {
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-        console.error('❌ Email configuration missing. Please set SMTP_USER and SMTP_PASS in .env file');
+    if (!transporter) {
+        console.warn('⚠️ Skipping SMTP verification - transporter not configured');
         return false;
     }
 
