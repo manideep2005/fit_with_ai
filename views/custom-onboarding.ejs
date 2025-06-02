@@ -14,7 +14,7 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: rgb(18, 17, 17);
+            background: #f5f5f5;
             min-height: 100vh;
             padding: 20px;
         }
@@ -48,34 +48,23 @@
         .header {
             text-align: center;
             margin-bottom: 40px;
-            color: white;
+            color: #333;
         }
         .header h1 {
-            font-size: 3em;
+            font-size: 2.5em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            animation: slideInDown 1s ease-out;
+            color: #2c3e50;
         }
         .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-            animation: slideInUp 1s ease-out 0.2s both;
-        }
-        @keyframes slideInDown {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes slideInUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            font-size: 1.1em;
+            color: #666;
         }
         .progress-container {
-            background: rgba(246, 242, 242, 0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
+            background: white;
+            border-radius: 15px;
             padding: 20px;
             margin-bottom: 30px;
-            animation: slideInLeft 1s ease-out 0.4s both;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .step-indicator {
             display: flex;
@@ -89,102 +78,89 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: rgba(243, 240, 240, 0.3);
+            background: #e0e0e0;
             border-radius: 2px;
             z-index: 1;
         }
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            background: #4CAF50;
             border-radius: 2px;
             transition: width 0.8s ease;
             width: 12.5%;
         }
         .step {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            border: 3px solid rgba(255, 255, 255, 0.5);
+            background: white;
+            border: 2px solid #e0e0e0;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             z-index: 2;
             transition: all 0.3s ease;
-            color: white;
+            color: #666;
             font-weight: bold;
         }
         .step.active {
-            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            background: #4CAF50;
             border-color: #4CAF50;
-            transform: scale(1.1);
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+            color: white;
         }
         .step.completed {
-            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            background: #4CAF50;
             border-color: #4CAF50;
+            color: white;
         }
         .progress-text {
             text-align: center;
-            color: white;
+            color: #333;
             font-weight: bold;
             margin-top: 10px;
         }
-        @keyframes slideInLeft {
-            from { transform: translateX(-50px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
         .form-step {
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(20px);
+            background: white;
             padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
-            animation: slideInRight 1s ease-out 0.6s both;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        @keyframes slideInRight {
-            from { transform: translateX(50px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        .form-step.hidden {
-            display: none;
         }
         .form-step h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 2em;
-            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+            text-align: left;
         }
         .form-group {
             margin-bottom: 25px;
         }
         .form-group label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1em;
         }
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 15px;
+            padding: 12px 15px;
             border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 1em;
             transition: all 0.3s ease;
             background: white;
+            color: #333;
         }
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: #4CAF50;
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.2);
-            transform: translateY(-2px);
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.1);
         }
         .form-row {
             display: grid;
@@ -316,15 +292,26 @@
             60% { transform: translateY(-5px); }
         }
         .health-tip {
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            border-left: 5px solid #2196F3;
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #2e7d32;
         }
         .health-tip i {
-            color: #2196F3;
-            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        .required-field {
+            color: #e53935;
+            margin-left: 4px;
+        }
+        .field-description {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
         }
         @media (max-width: 768px) {
             .form-row {
@@ -347,8 +334,8 @@
     <div class="particles" id="particles"></div>
     <div class="onboarding-container">
         <div class="header">
-            <h1><i class="fas fa-heartbeat"></i> FitWit AI</h1>
-            <p>Comprehensive Health Assessment & Personalized Wellness Journey</p>
+            <h1>Welcome to Your Fitness Journey</h1>
+            <p>Let's create your personalized fitness plan in a few simple steps</p>
         </div>
         <div class="progress-container">
             <div class="step-indicator">
@@ -370,50 +357,54 @@
         </div>
         <!-- Step 1: Personal Information -->
         <div class="form-step" data-step="1">
-            <h2><i class="fas fa-user"></i> Personal Information</h2>
+            <h2><i class="fas fa-user"></i> Tell Us About Yourself</h2>
             <div class="form-row">
                 <div class="form-group">
-                    <label for="firstName">First Name *</label>
-                    <input type="text" id="firstName" required>
+                    <label>First Name <span class="required-field">*</span></label>
+                    <input type="text" id="firstName" required placeholder="Enter your first name">
+                    <div class="field-description">Your preferred first name</div>
                 </div>
                 <div class="form-group">
-                    <label for="lastName">Last Name *</label>
-                    <input type="text" id="lastName" required>
+                    <label>Last Name <span class="required-field">*</span></label>
+                    <input type="text" id="lastName" required placeholder="Enter your last name">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label for="age">Age *</label>
-                    <input type="number" id="age" min="1" max="120" required>
+                    <label>Age <span class="required-field">*</span></label>
+                    <input type="number" id="age" min="18" max="120" required placeholder="Your age in years">
+                    <div class="field-description">Must be 18 years or older</div>
                 </div>
                 <div class="form-group">
-                    <label for="gender">Gender *</label>
+                    <label>Gender <span class="required-field">*</span></label>
                     <select id="gender" required>
-                        <option value="">Select gender</option>
+                        <option value="">Select your gender</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                         <option value="other">Other</option>
-                        <option value="prefer-not-to-say">Prefer not to say</option>
+                        <option value="prefer-not">Prefer not to say</option>
                     </select>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label for="email">Email Address *</label>
-                    <input type="email" id="email" required>
+                    <label>Email Address <span class="required-field">*</span></label>
+                    <input type="email" id="email" required placeholder="your.email@example.com">
+                    <div class="field-description">We'll send your personalized plan here</div>
                 </div>
                 <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone">
+                    <label>Phone Number</label>
+                    <input type="tel" id="phone" placeholder="Your contact number (optional)">
                 </div>
             </div>
             <div class="form-group">
-                <label for="occupation">Occupation</label>
+                <label>Occupation</label>
                 <input type="text" id="occupation" placeholder="What do you do for work?">
+                <div class="field-description">Helps us understand your daily activity level</div>
             </div>
             <div class="health-tip">
                 <i class="fas fa-lightbulb"></i>
-                <strong>Health Tip:</strong> Providing accurate personal information helps us create a personalized health plan.
+                <div>Providing accurate personal information helps us create a personalized health plan that's just right for you.</div>
             </div>
         </div>
         <!-- Step 2: Physical Metrics -->
@@ -857,8 +848,6 @@
                 <strong>Health Tip:</strong> Family history helps guide preventive care.
             </div>
         </div>
-           
-           
         <!-- Step 10: Preventive Care & Screenings -->
         <div class="form-step hidden" data-step="9">
             <h2><i class="fas fa-clipboard-check"></i> Preventive Care & Health Screenings</h2>
@@ -1171,7 +1160,7 @@
                         activityLevel: document.querySelector('.rating-scale[data-field="fitnessLevel"] .rating-item.selected')?.dataset.value || ''
                     };
 
-                    const response = await fetch('/CustomOnboarding', {
+                    const response = await fetch('/custom-onboarding', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

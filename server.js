@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const session = require('express-session');
+const cookieSession = require('cookie-session');
 const path = require('path');
 const PDFDocument = require('pdfkit');
 const nodemailer = require('nodemailer');
@@ -395,16 +395,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Production-ready session configuration
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }
+// Replace express-session with cookie-session
+app.use(cookieSession({
+    name: 'session',
+    keys: [process.env.SESSION_SECRET || 'your-secret-key'],
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'lax'
 }));
 
 // Authentication middleware
@@ -432,15 +430,12 @@ app.get('/health', (req, res) => {
 // Routes
 app.get('/', (req, res) => {
     try {
-        // If user is logged in and not onboarded, redirect to onboarding
-        if (req.session.userData && !req.session.userData.isOnboarded) {
-            return res.redirect(302, '/custom-onboarding');
-        }
         // If user is logged in and onboarded, redirect to dashboard
         if (req.session.userData && req.session.userData.isOnboarded) {
-            return res.redirect(302, '/dashboard');
+            return res.redirect('/dashboard');
         }
-        res.render('index', { user: null });
+        // Always render index for non-logged in users
+        res.render('index', { user: req.session.userData || null });
     } catch (error) {
         console.error('Error rendering index:', error);
         res.status(500).json({ error: 'Error rendering page' });
@@ -559,15 +554,18 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-// Custom onboarding route
+// Update custom onboarding routes to be consistent
 app.get('/custom-onboarding', (req, res) => {
     try {
+        // Check if user is logged in
         if (!req.session.userData) {
-            return res.redirect(302, '/');
+            return res.redirect('/');
         }
+        // If already onboarded, go to dashboard
         if (req.session.userData.isOnboarded) {
-            return res.redirect(302, '/dashboard');
+            return res.redirect('/dashboard');
         }
+        // Show onboarding only for logged-in, non-onboarded users
         res.render('custom-onboarding', { 
             user: req.session.userData,
             error: req.query.error
@@ -578,7 +576,8 @@ app.get('/custom-onboarding', (req, res) => {
     }
 });
 
-app.post('/CustomOnboarding', requireAuth, async (req, res) => {
+// Update route to be lowercase and consistent
+app.post('/custom-onboarding', requireAuth, async (req, res) => {
     try {
         const { age, gender, height, weight, fitnessGoals, medicalConditions, activityLevel } = req.body;
         
