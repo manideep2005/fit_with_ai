@@ -34,9 +34,7 @@
     "env": {
         "NODE_ENV": "production",
         "BASE_URL": "https://fit-with-ai.vercel.app",
-        "SESSION_SECRET": "@session_secret",
-        "SMTP_USER": "@smtp_user",
-        "SMTP_PASS": "@smtp_pass",
+        "SESSION_SECRET": "temporary-session-secret-key-12345",
         "VERCEL": "1"
     },
     "regions": ["bom1"],
