@@ -407,7 +407,7 @@ app.use(cookieSession({
 
 // Authentication middleware
 const requireAuth = (req, res, next) => {
-    if (!req.session.userData) {
+    if (!req.session || !req.session.userData) {
         return res.redirect('/');
     }
     next();
@@ -430,18 +430,23 @@ app.get('/health', (req, res) => {
 // Routes
 app.get('/', (req, res) => {
     try {
-        // If user is logged in but not onboarded, redirect to onboarding
+        // Clear any existing session to ensure fresh start
+        if (!req.session.userData) {
+            // For non-logged in users, always show index page
+            return res.render('index', { user: null });
+        }
+
+        // Only redirect if user is explicitly logged in
         if (req.session.userData && !req.session.userData.isOnboarded) {
             return res.redirect('/custom-onboarding');
         }
         
-        // If user is logged in and onboarded, redirect to dashboard
         if (req.session.userData && req.session.userData.isOnboarded) {
             return res.redirect('/dashboard');
         }
 
-        // For non-logged in users, show index page
-        res.render('index', { user: null });
+        // Default to index page
+        return res.render('index', { user: null });
     } catch (error) {
         console.error('Error rendering index:', error);
         res.status(500).json({ error: 'Error rendering page' });
@@ -515,13 +520,8 @@ app.post('/signup', async (req, res) => {
 });
 
 // Custom onboarding route
-app.get('/custom-onboarding', (req, res) => {
+app.get('/custom-onboarding', requireAuth, (req, res) => {
     try {
-        // Must be logged in to access onboarding
-        if (!req.session.userData) {
-            return res.redirect('/');
-        }
-
         // If already onboarded, go to dashboard
         if (req.session.userData.isOnboarded) {
             return res.redirect('/dashboard');
@@ -595,7 +595,7 @@ app.post('/custom-onboarding', requireAuth, async (req, res) => {
     }
 });
 
-// Dashboard and protected routes
+// Dashboard route
 app.get('/dashboard', requireAuth, (req, res) => {
     try {
         // Must complete onboarding first

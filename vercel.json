@@ -24,67 +24,62 @@
             "dest": "/public/videos/$1"
         },
         {
-            "src": "^/$",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/login",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/signup",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/custom-onboarding",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/dashboard",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/workouts",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/nutrition",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/health-metrics",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/meal-suggestions",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/google-fit",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/doctor-consult",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/settings",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/logout",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/health",
-            "dest": "/server.js"
-        },
-        {
             "handle": "filesystem"
         },
         {
+            "src": "/ws",
+            "dest": "/server.js",
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
+                "Access-Control-Allow-Credentials": "true"
+            }
+        },
+        {
+            "src": "/custom-onboarding",
+            "methods": ["GET", "POST"],
+            "dest": "/server.js",
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
+                "Access-Control-Allow-Credentials": "true"
+            }
+        },
+        {
+            "src": "/(dashboard|workouts|nutrition|health-metrics|meal-suggestions|google-fit|doctor-consult|settings|logout|health)",
+            "dest": "/server.js",
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
+                "Access-Control-Allow-Credentials": "true"
+            }
+        },
+        {
+            "src": "/(login|signup|)",
+            "dest": "/server.js",
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
+                "Access-Control-Allow-Credentials": "true"
+            }
+        },
+        {
             "src": "/(.*)",
-            "dest": "/server.js"
+            "dest": "/server.js",
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
+                "Access-Control-Allow-Credentials": "true",
+                "Cache-Control": "no-store, no-cache, must-revalidate",
+                "X-Frame-Options": "DENY",
+                "X-Content-Type-Options": "nosniff",
+                "Referrer-Policy": "strict-origin-when-cross-origin"
+            }
         }
     ],
     "env": {
