@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
         {
-            "src": "server.js",
+            "src": "api/index.js",
             "use": "@vercel/node"
         }
     ],
@@ -24,19 +24,11 @@
             "dest": "/public/videos/$1"
         },
         {
-            "src": "/debug-env",
-            "dest": "/server.js"
-        },
-        {
-            "src": "/test-email",
-            "dest": "/server.js"
-        },
-        {
             "handle": "filesystem"
         },
         {
             "src": "/(.*)",
-            "dest": "/server.js"
+            "dest": "/api/index.js"
         }
     ],
     "env": {
@@ -44,6 +36,7 @@
         "BASE_URL": "https://fit-with-qdma47vkc-gonugunta-manideeps-projects.vercel.app",
         "APP_URL": "https://fit-with-qdma47vkc-gonugunta-manideeps-projects.vercel.app",
         "SESSION_SECRET": "temporary-session-secret-key-12345",
+        "SMTP_USER": "fitwitai18@gmail.com",
         "VERCEL": "1"
     },
     "regions": ["bom1"],

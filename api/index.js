@@ -14,5 +14,5 @@ app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });
 
-// Export the Express app as a serverless function
+// Export the Express app
 module.exports = app; 
