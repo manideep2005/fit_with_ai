@@ -4,6 +4,10 @@
         {
             "src": "server.js",
             "use": "@vercel/node"
+        },
+        {
+            "src": "api/*.js",
+            "use": "@vercel/node"
         }
     ],
     "routes": [
@@ -24,8 +28,12 @@
             "dest": "/public/videos/$1"
         },
         {
-            "src": "/api/test/(.*)",
-            "dest": "/server.js"
+            "src": "/api/test-email",
+            "dest": "/api/test-email.js"
+        },
+        {
+            "src": "/api/debug-env",
+            "dest": "/api/debug-env.js"
         },
         {
             "handle": "filesystem"
@@ -37,8 +45,8 @@
     ],
     "env": {
         "NODE_ENV": "production",
-        "BASE_URL": "https://fit-with-nd3507tjy-gonugunta-manideeps-projects.vercel.app",
-        "APP_URL": "https://fit-with-nd3507tjy-gonugunta-manideeps-projects.vercel.app",
+        "BASE_URL": "https://fit-with-57d4pcvcw-gonugunta-manideeps-projects.vercel.app",
+        "APP_URL": "https://fit-with-57d4pcvcw-gonugunta-manideeps-projects.vercel.app",
         "SESSION_SECRET": "temporary-session-secret-key-12345",
         "SMTP_USER": "fitwitai18@gmail.com"
     },
