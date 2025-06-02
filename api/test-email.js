@@ -9,7 +9,8 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-module.exports = async (req, res) => {
+// Standalone serverless function
+export default async function handler(req, res) {
     // Enable CORS
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -56,7 +57,7 @@ module.exports = async (req, res) => {
 
         const info = await transporter.sendMail(testMailOptions);
         console.log('Test email sent successfully:', info.messageId);
-        res.json({ success: true, messageId: info.messageId });
+        res.status(200).json({ success: true, messageId: info.messageId });
     } catch (error) {
         console.error('Test email error:', error);
         res.status(500).json({ 
@@ -65,4 +66,4 @@ module.exports = async (req, res) => {
             details: error.response || 'No additional details'
         });
     }
-}; 
+} 
