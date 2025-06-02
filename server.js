@@ -13,6 +13,9 @@ const {
 } = require('./services/emailService');
 require('dotenv').config();
 
+// Import test routes
+const testRoutes = require('./api/test');
+
 const app = express();
 
 // Add this after the other requires at the top
@@ -388,13 +391,11 @@ app.use(cookieSession({
     sameSite: 'lax'
 }));
 
-// Authentication middleware
-const requireAuth = (req, res, next) => {
-    // Skip authentication for test routes in production
-    if (process.env.NODE_ENV === 'production' && (req.path === '/test-email' || req.path === '/debug-env')) {
-        return next();
-    }
+// Use test routes without authentication
+app.use('/api/test', testRoutes);
 
+// Authentication middleware for other routes
+const requireAuth = (req, res, next) => {
     if (!req.session.isAuthenticated) {
         return res.status(401).json({ error: 'Authentication required' });
     }
@@ -404,8 +405,7 @@ const requireAuth = (req, res, next) => {
 // Apply authentication middleware to all routes except public ones
 app.use((req, res, next) => {
     const publicPaths = [
-        '/test-email',
-        '/debug-env',
+        '/api/test',
         '/js',
         '/css',
         '/images',
