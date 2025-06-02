@@ -6,6 +6,7 @@ const PDFDocument = require('pdfkit');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
+const { sendWelcomeEmail, sendAssessmentCompletionEmail, transporter } = require('./services/emailService');
 require('dotenv').config();
 
 const app = express();
@@ -79,87 +80,6 @@ const verifyConnection = async () => {
 (async () => {
     await verifyConnection();
 })();
-
-// Function to send welcome email with retry mechanism
-async function sendWelcomeEmail(userEmail, fullName) {
-    console.log('Starting welcome email send process for:', userEmail);
-    const maxRetries = 3;
-    let lastError = null;
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        try {
-            console.log(`Attempt ${attempt}: Preparing welcome email for ${userEmail}`);
-            const mailOptions = {
-                from: {
-                    name: 'FitWit AI',
-                    address: process.env.SMTP_USER || 'fitwitai18@gmail.com'
-                },
-                to: userEmail,
-                subject: '🏋️‍♂️ Welcome to Fit With AI - Your Personal Fitness Journey Begins!',
-                html: `
-                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                        <div style="background-color: #4ecdc4; color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
-                            <h1 style="margin: 0;">Welcome to FitWit AI!</h1>
-                            <p style="margin: 10px 0 0 0; opacity: 0.9;">Your personal fitness journey begins here</p>
-                        </div>
-                        
-                        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                            <h2 style="color: #4ecdc4; margin-top: 0;">Hello ${fullName},</h2>
-                            <p>Welcome to Fit With AI! We're excited to help you achieve your fitness goals.</p>
-                            
-                            <div style="background-color: white; padding: 20px; border-radius: 5px; margin: 20px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                                <h3 style="color: #4ecdc4; margin-top: 0;">What's Next?</h3>
-                                <ul style="padding-left: 20px; line-height: 1.6;">
-                                    <li>Complete your fitness assessment</li>
-                                    <li>Get your personalized workout plan</li>
-                                    <li>Track your progress</li>
-                                    <li>Connect with fitness experts</li>
-                                </ul>
-                            </div>
-
-                            <div style="background-color: #e8f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                                <p style="margin: 0; color: #2a9187;">
-                                    <strong>Getting Started:</strong>
-                                </p>
-                                <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #2a9187;">
-                                    <li>Fill out your fitness profile</li>
-                                    <li>Set your fitness goals</li>
-                                    <li>Choose your preferred workout times</li>
-                                    <li>Start your personalized fitness journey</li>
-                                </ul>
-                            </div>
-
-                            <div style="text-align: center; margin-top: 30px; padding: 20px; background-color: white; border-radius: 5px;">
-                                <p style="color: #4ecdc4; font-size: 1.2em; margin: 0;">Ready to transform your fitness journey? 💪</p>
-                            </div>
-                        </div>
-                        
-                        <div style="text-align: center; margin-top: 20px; color: #6c757d;">
-                            <p style="margin: 5px 0;">Thank you for choosing Fit With AI!</p>
-                            <small style="opacity: 0.7;">© ${new Date().getFullYear()} Fit With AI. All rights reserved.</small>
-                        </div>
-                    </div>
-                `
-            };
-
-            console.log('Attempting to send welcome email...');
-            const info = await transporter.sendMail(mailOptions);
-            console.log('✅ Welcome email sent successfully:', info.messageId);
-            return { success: true, messageId: info.messageId };
-        } catch (error) {
-            console.error(`❌ Attempt ${attempt} failed:`, error);
-            lastError = error;
-            
-            if (attempt < maxRetries) {
-                const delay = attempt * 1000;
-                console.log(`⏳ Waiting ${delay}ms before retry...`);
-                await new Promise(resolve => setTimeout(resolve, delay));
-            }
-        }
-    }
-
-    throw new Error(`Failed to send welcome email after ${maxRetries} attempts. Last error: ${lastError.message}`);
-}
 
 // Function to generate and send PDF
 async function generateAndSendPDF(userData, userEmail) {
@@ -723,7 +643,10 @@ app.get('/logout', (req, res) => {
 app.get('/test-email', async (req, res) => {
     try {
         const testMailOptions = {
-            from: process.env.SMTP_USER || 'fitwitai18@gmail.com',
+            from: {
+                name: 'FitWit AI',
+                address: process.env.SMTP_USER || 'fitwitai18@gmail.com'
+            },
             to: req.session.userData ? req.session.userData.email : 'fitwitai18@gmail.com',
             subject: 'Test Email from FitWit AI',
             text: 'This is a test email from FitWit AI application.',
