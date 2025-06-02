@@ -16,6 +16,27 @@ if (process.env.NODE_ENV === 'production') {
     app.enable('trust proxy');
 }
 
+// Cache control middleware for dynamic routes
+app.use((req, res, next) => {
+    // Skip for static files
+    if (req.path.startsWith('/public/') || 
+        req.path.startsWith('/js/') || 
+        req.path.startsWith('/css/') || 
+        req.path.startsWith('/images/') || 
+        req.path.startsWith('/videos/')) {
+        return next();
+    }
+    
+    // Set headers to prevent caching for dynamic routes
+    res.set({
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Surrogate-Control': 'no-store'
+    });
+    next();
+});
+
 // Create transporter object using Gmail SMTP
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -368,7 +389,7 @@ function getRecommendations(activityLevel) {
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Serve static files - single configuration
+// Serve static files BEFORE other middleware
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(bodyParser.urlencoded({ extended: true }));

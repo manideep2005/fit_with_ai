@@ -36,10 +36,24 @@
             }
         },
         {
+            "src": "/custom-onboarding",
+            "dest": "/server.js",
+            "headers": {
+                "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0",
+                "Surrogate-Control": "no-store"
+            }
+        },
+        {
             "src": "/(.*)",
             "dest": "/server.js",
             "headers": {
-                "Cache-Control": "no-store, no-cache, must-revalidate"
+                "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0",
+                "Surrogate-Control": "no-store",
+                "Vary": "*"
             }
         }
     ],
