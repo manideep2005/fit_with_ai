@@ -4,33 +4,21 @@
         {
             "src": "server.js",
             "use": "@vercel/node"
+        },
+        {
+            "src": "public/**",
+            "use": "@vercel/static"
         }
     ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "server.js",
-            "headers": {
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
-                "Access-Control-Allow-Credentials": "true",
-                "Cache-Control": "no-store, no-cache, must-revalidate",
-                "X-Frame-Options": "DENY",
-                "X-Content-Type-Options": "nosniff",
-                "Referrer-Policy": "strict-origin-when-cross-origin"
-            }
-        }
+    "rewrites": [
+        { "source": "/js/(.*)", "destination": "/public/js/$1" },
+        { "source": "/css/(.*)", "destination": "/public/css/$1" },
+        { "source": "/images/(.*)", "destination": "/public/images/$1" },
+        { "source": "/videos/(.*)", "destination": "/public/videos/$1" },
+        { "source": "/(.*)", "destination": "/server.js" }
     ],
     "env": {
         "NODE_ENV": "production",
-        "BASE_URL": "https://fit-with-ai.vercel.app",
-        "SESSION_SECRET": "your-secret-key",
-        "VERCEL": "1"
-    },
-    "regions": ["bom1"],
-    "public": true,
-    "github": {
-        "silent": true
+        "SESSION_SECRET": "your-secret-key-123"
     }
 } 
