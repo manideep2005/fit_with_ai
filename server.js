@@ -13,12 +13,26 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Production-ready session configuration
 app.use(session({
     secret: process.env.SESSION_SECRET || 'your-secret-key',
     resave: false,
-    saveUninitialized: true,
-    cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production', // Only use secure cookies in production
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
 }));
+
+// Error handling for session
+app.use((err, req, res, next) => {
+    if (err.name === 'SessionError') {
+        return res.status(500).json({ error: 'Session error occurred' });
+    }
+    next(err);
+});
 
 // Move static files to public directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -43,15 +57,6 @@ app.use((req, res, next) => {
         }
     });
     next();
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error('Error:', err);
-    res.status(500).render('error', { 
-        error: 'An error occurred',
-        details: process.env.NODE_ENV === 'development' ? err.message : null
-    });
 });
 
 // Routes
@@ -169,8 +174,19 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-// Start server
+// Start server with error handling
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+}).on('error', (err) => {
+    console.error('Server failed to start:', err);
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error('Error:', err);
+    res.status(500).render('error', { 
+        error: 'An error occurred',
+        details: process.env.NODE_ENV === 'development' ? err.message : 'Internal Server Error'
+    });
 }); 
