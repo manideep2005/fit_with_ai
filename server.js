@@ -390,14 +390,37 @@ app.use(cookieSession({
 
 // Authentication middleware
 const requireAuth = (req, res, next) => {
-    console.log('Auth check - Session:', req.session);
-    if (!req.session || !req.session.userData) {
-        console.log('No auth, redirecting to index');
-        req.session = null; // Clear any invalid session
-        return res.redirect('/?error=auth_required');
+    // Skip authentication for test routes in production
+    if (process.env.NODE_ENV === 'production' && (req.path === '/test-email' || req.path === '/debug-env')) {
+        return next();
+    }
+
+    if (!req.session.isAuthenticated) {
+        return res.status(401).json({ error: 'Authentication required' });
     }
     next();
 };
+
+// Apply authentication middleware to all routes except public ones
+app.use((req, res, next) => {
+    const publicPaths = [
+        '/test-email',
+        '/debug-env',
+        '/js',
+        '/css',
+        '/images',
+        '/videos',
+        '/auth/login',
+        '/auth/register',
+        '/auth/check-email'
+    ];
+
+    if (publicPaths.some(path => req.path.startsWith(path))) {
+        return next();
+    }
+
+    requireAuth(req, res, next);
+});
 
 // Basic error handler for views
 app.use((err, req, res, next) => {
