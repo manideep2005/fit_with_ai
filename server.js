@@ -832,15 +832,24 @@ app.get('/logout', (req, res) => {
     }
 });
 
-// Test email endpoint
+// Test email endpoint - No authentication required
 app.get('/test-email', async (req, res) => {
     try {
+        if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+            return res.status(500).json({
+                success: false,
+                error: 'SMTP credentials not configured',
+                smtp_user_set: !!process.env.SMTP_USER,
+                smtp_pass_set: !!process.env.SMTP_PASS
+            });
+        }
+
         const testMailOptions = {
             from: {
                 name: 'FitWit AI',
-                address: process.env.SMTP_USER || 'fitwitai18@gmail.com'
+                address: process.env.SMTP_USER
             },
-            to: req.session.userData ? req.session.userData.email : 'fitwitai18@gmail.com',
+            to: process.env.SMTP_USER,
             subject: 'Test Email from FitWit AI',
             text: 'This is a test email from FitWit AI application.',
             html: `
@@ -849,6 +858,8 @@ app.get('/test-email', async (req, res) => {
                     <p>This is a test email from FitWit AI application.</p>
                     <p>If you receive this, the email service is working correctly!</p>
                     <p>Time sent: ${new Date().toLocaleString()}</p>
+                    <p>Environment: ${process.env.NODE_ENV}</p>
+                    <p>SMTP User: ${process.env.SMTP_USER}</p>
                 </div>
             `
         };
