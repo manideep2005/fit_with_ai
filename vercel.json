@@ -90,7 +90,7 @@
     "env": {
         "NODE_ENV": "production",
         "BASE_URL": "https://fit-with-ai.vercel.app",
-        "SESSION_SECRET": "@session_secret",
+        "SESSION_SECRET": "your-secret-key-for-production",
         "VERCEL": "1"
     },
     "regions": ["bom1"],
