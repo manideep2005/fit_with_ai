@@ -15,6 +15,21 @@ require('dotenv').config();
 
 const app = express();
 
+// Debug route for environment variables (development only)
+if (process.env.NODE_ENV === 'development') {
+    app.get('/debug-env', (req, res) => {
+        res.json({
+            environment: process.env.NODE_ENV,
+            smtp_user_set: !!process.env.SMTP_USER,
+            smtp_pass_set: !!process.env.SMTP_PASS,
+            session_secret_set: !!process.env.SESSION_SECRET,
+            port_set: !!process.env.PORT,
+            smtp_user_correct: process.env.SMTP_USER === 'fitwitai18@gmail.com',
+            port_value: process.env.PORT || 3000
+        });
+    });
+}
+
 // Production settings
 if (process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1);
@@ -99,6 +114,7 @@ const verifyConnection = async () => {
 async function generateAndSendPDF(userData, userEmail) {
     return new Promise((resolve, reject) => {
         try {
+            console.log('Starting PDF generation for:', userEmail);
             const doc = new PDFDocument();
             const fileName = `onboarding_details_${Date.now()}.pdf`;
             const filePath = path.join(__dirname, 'temp', fileName);
@@ -224,14 +240,49 @@ async function generateAndSendPDF(userData, userEmail) {
                    width: 400
                });
 
-            // Handle PDF generation completion
+            // Handle PDF completion
             writeStream.on('finish', async () => {
                 try {
-                    await sendAssessmentCompletionEmail(userEmail, userData.fullName);
-                    
+                    console.log('PDF generated, sending email...');
+                    // Send email with PDF attachment
+                    const mailOptions = {
+                        from: {
+                            name: 'FitWit AI',
+                            address: process.env.SMTP_USER
+                        },
+                        to: userEmail,
+                        subject: '🏋️‍♂️ Your FitWit AI Personalized Fitness Plan',
+                        html: `
+                            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                                <h2 style="color: #4ecdc4;">Your Personalized Fitness Plan is Ready! 🎉</h2>
+                                <p>Thank you for completing your fitness assessment! We've created a comprehensive plan just for you.</p>
+                                <p>Attached is your personalized fitness journey document that includes:</p>
+                                <ul>
+                                    <li>Your Personal Information</li>
+                                    <li>Fitness Goals</li>
+                                    <li>Customized Recommendations</li>
+                                </ul>
+                                <p>Review your plan and let's start your fitness journey together!</p>
+                                <p>If you have any questions, our team is here to help!</p>
+                            </div>
+                        `,
+                        attachments: [{
+                            filename: 'FitWit_AI_Fitness_Plan.pdf',
+                            path: filePath
+                        }]
+                    };
+
+                    const { sendAssessmentCompletionEmail } = require('./services/emailService');
+                    await sendAssessmentCompletionEmail(userEmail, userData.fullName, mailOptions);
+                    console.log('Assessment email sent successfully');
+
                     // Clean up: delete the temporary file
                     fs.unlink(filePath, (err) => {
-                        if (err) console.error('Error deleting temporary PDF:', err);
+                        if (err) {
+                            console.error('Error deleting temporary PDF:', err);
+                        } else {
+                            console.log('Temporary PDF file deleted');
+                        }
                     });
 
                     resolve();
@@ -321,8 +372,10 @@ app.use(cookieSession({
 
 // Authentication middleware
 const requireAuth = (req, res, next) => {
+    console.log('Auth check - Session:', req.session);
     if (!req.session || !req.session.userData) {
-        return res.redirect('/');
+        console.log('No auth, redirecting to index');
+        return res.redirect('/?error=auth_required');
     }
     next();
 };
@@ -344,25 +397,31 @@ app.get('/health', (req, res) => {
 // Routes
 app.get('/', (req, res) => {
     try {
-        // Clear any existing session to ensure fresh start
-        if (!req.session.userData) {
-            // For non-logged in users, always show index page
+        console.log('Session data:', req.session);
+        
+        // If no session exists, show index page
+        if (!req.session || !req.session.userData) {
+            console.log('No session, showing index page');
             return res.render('index', { user: null });
         }
 
-        // Only redirect if user is explicitly logged in
-        if (req.session.userData && !req.session.userData.isOnboarded) {
-            return res.redirect('/custom-onboarding');
-        }
-        
-        if (req.session.userData && req.session.userData.isOnboarded) {
+        // If user is onboarded, go to dashboard
+        if (req.session.userData.isOnboarded) {
+            console.log('User is onboarded, redirecting to dashboard');
             return res.redirect('/dashboard');
         }
 
+        // If user is logged in but not onboarded, go to onboarding
+        if (req.session.userData && !req.session.userData.isOnboarded) {
+            console.log('User not onboarded, redirecting to onboarding');
+            return res.redirect('/custom-onboarding');
+        }
+
         // Default to index page
+        console.log('Default case, showing index page');
         return res.render('index', { user: null });
     } catch (error) {
-        console.error('Error rendering index:', error);
+        console.error('Error in root route:', error);
         res.status(500).json({ error: 'Error rendering page' });
     }
 });
@@ -448,22 +507,33 @@ app.post('/signup', async (req, res) => {
 // Custom onboarding route
 app.get('/custom-onboarding', requireAuth, (req, res) => {
     try {
+        console.log('Onboarding route - Session:', req.session);
+        
+        // If not logged in, redirect to index
+        if (!req.session || !req.session.userData) {
+            console.log('No session in onboarding, redirecting to index');
+            return res.redirect('/');
+        }
+
         // If already onboarded, go to dashboard
         if (req.session.userData.isOnboarded) {
+            console.log('User already onboarded, redirecting to dashboard');
             return res.redirect('/dashboard');
         }
 
         // Show onboarding for logged-in, non-onboarded users
+        console.log('Rendering onboarding page');
         res.render('custom-onboarding', { 
             user: req.session.userData,
             error: req.query.error
         });
     } catch (error) {
         console.error('Onboarding error:', error);
-        res.status(500).json({ error: 'Error rendering onboarding page' });
+        res.redirect('/?error=onboarding_failed');
     }
 });
 
+// Handle onboarding form submission
 app.post('/custom-onboarding', requireAuth, async (req, res) => {
     try {
         console.log('POST /custom-onboarding - Body:', req.body);
@@ -482,7 +552,8 @@ app.post('/custom-onboarding', requireAuth, async (req, res) => {
             console.log('Missing required fields');
             return res.status(400).json({ 
                 success: false, 
-                error: 'Required fields are missing' 
+                error: 'Required fields are missing',
+                redirectTo: '/custom-onboarding'
             });
         }
 
@@ -530,10 +601,11 @@ app.post('/custom-onboarding', requireAuth, async (req, res) => {
         });
     } catch (error) {
         console.error('Onboarding save error:', error);
-        res.status(500).json({ 
+        return res.status(500).json({ 
             success: false, 
             error: 'Internal server error',
-            details: error.message
+            details: error.message,
+            redirectTo: '/custom-onboarding'
         });
     }
 });
@@ -641,8 +713,14 @@ app.get('/settings', requireAuth, (req, res) => {
 
 // Logout Route
 app.get('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
+    try {
+        console.log('Logging out user');
+        req.session = null; // Clear the session
+        res.redirect('/');
+    } catch (error) {
+        console.error('Logout error:', error);
+        res.redirect('/');
+    }
 });
 
 // Test email endpoint

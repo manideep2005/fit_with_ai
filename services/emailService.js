@@ -143,7 +143,7 @@ const sendWelcomeEmail = async (userEmail, userName) => {
     };
 };
 
-const sendAssessmentCompletionEmail = async (userEmail, userName, assessmentData) => {
+const sendAssessmentCompletionEmail = async (userEmail, userName, mailOptions = null) => {
     if (!transporter) {
         console.warn('⚠️ Email service not initialized - skipping assessment email');
         return { success: false, error: 'Email service not initialized' };
@@ -155,7 +155,8 @@ const sendAssessmentCompletionEmail = async (userEmail, userName, assessmentData
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-            const mailOptions = {
+            // Use provided mail options or create default ones
+            const emailOptions = mailOptions || {
                 from: {
                     name: 'FitWit AI',
                     address: process.env.SMTP_USER
@@ -192,7 +193,13 @@ const sendAssessmentCompletionEmail = async (userEmail, userName, assessmentData
                 `
             };
 
-            const info = await transporter.sendMail(mailOptions);
+            console.log('Sending assessment email with options:', {
+                to: emailOptions.to,
+                subject: emailOptions.subject,
+                hasAttachments: !!emailOptions.attachments
+            });
+
+            const info = await transporter.sendMail(emailOptions);
             console.log('✅ Assessment completion email sent successfully:', info.messageId);
             return { success: true, messageId: info.messageId };
         } catch (error) {
