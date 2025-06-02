@@ -57,7 +57,15 @@ app.get('/health', (req, res) => {
 // Routes
 app.get('/', (req, res) => {
     try {
-        res.render('index', { user: req.session.userData });
+        // If user is logged in and not onboarded, redirect to onboarding
+        if (req.session.userData && !req.session.userData.isOnboarded) {
+            return res.redirect('/CustomOnboarding');
+        }
+        // If user is logged in and onboarded, redirect to dashboard
+        if (req.session.userData && req.session.userData.isOnboarded) {
+            return res.redirect('/dashboard');
+        }
+        res.render('index', { user: null });
     } catch (error) {
         console.error('Error rendering index:', error);
         res.status(500).json({ error: 'Error rendering page' });
@@ -76,7 +84,11 @@ app.post('/login', (req, res) => {
                 fullName: "Test User",
                 isOnboarded: false
             };
-            res.json({ success: true, isOnboarded: false });
+            // Redirect to onboarding if not onboarded
+            return res.json({ 
+                success: true, 
+                redirectTo: '/CustomOnboarding'
+            });
         } else {
             res.json({ success: false, error: 'Invalid credentials' });
         }
@@ -96,7 +108,11 @@ app.post('/signup', (req, res) => {
             fullName: fullName,
             isOnboarded: false
         };
-        res.json({ success: true, isOnboarded: false });
+        // Redirect to onboarding after signup
+        return res.json({ 
+            success: true, 
+            redirectTo: '/CustomOnboarding'
+        });
     } catch (error) {
         console.error('Signup error:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -104,21 +120,30 @@ app.post('/signup', (req, res) => {
 });
 
 // Onboarding Routes
-app.get('/onboarding', requireAuth, (req, res) => {
+app.get('/CustomOnboarding', requireAuth, (req, res) => {
     try {
         if (req.session.userData.isOnboarded) {
             return res.redirect('/dashboard');
         }
-        res.render('onboarding', { user: req.session.userData });
+        res.render('CustomOnboarding', { 
+            user: req.session.userData,
+            error: req.query.error
+        });
     } catch (error) {
         console.error('Onboarding error:', error);
         res.status(500).json({ error: 'Error rendering onboarding page' });
     }
 });
 
-app.post('/onboarding', requireAuth, (req, res) => {
+app.post('/CustomOnboarding', requireAuth, (req, res) => {
     try {
         const { age, gender, height, weight, fitnessGoals, activityLevel } = req.body;
+        
+        // Validate required fields
+        if (!age || !gender || !height || !weight || !fitnessGoals || !activityLevel) {
+            return res.redirect('/CustomOnboarding?error=All fields are required');
+        }
+
         req.session.userData = {
             ...req.session.userData,
             isOnboarded: true,
@@ -131,7 +156,10 @@ app.post('/onboarding', requireAuth, (req, res) => {
                 activityLevel
             }
         };
-        res.json({ success: true });
+        return res.json({ 
+            success: true, 
+            redirectTo: '/dashboard'
+        });
     } catch (error) {
         console.error('Onboarding save error:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -142,7 +170,7 @@ app.post('/onboarding', requireAuth, (req, res) => {
 app.get('/dashboard', requireAuth, (req, res) => {
     try {
         if (!req.session.userData.isOnboarded) {
-            return res.redirect('/onboarding');
+            return res.redirect('/CustomOnboarding');
         }
         res.render('dashboard', {
             user: req.session.userData,
@@ -164,7 +192,7 @@ app.get('/dashboard', requireAuth, (req, res) => {
 // Logout Route
 app.get('/logout', (req, res) => {
     req.session.destroy();
-    res.json({ success: true });
+    res.redirect('/');
 });
 
 // Global error handler
