@@ -765,40 +765,5 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Function to find an available port
-const findAvailablePort = (startPort) => {
-    return new Promise((resolve, reject) => {
-        const server = require('net').createServer();
-        server.unref();
-        server.on('error', (err) => {
-            if (err.code === 'EADDRINUSE') {
-                resolve(findAvailablePort(startPort + 1));
-            } else {
-                reject(err);
-            }
-        });
-        server.listen(startPort, () => {
-            server.close(() => {
-                resolve(startPort);
-            });
-        });
-    });
-};
-
-// Start server with error handling
-const startServer = async () => {
-    try {
-        const PORT = await findAvailablePort(process.env.PORT || 3000);
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-        }).on('error', (err) => {
-            console.error('Server failed to start:', err);
-            process.exit(1);
-        });
-    } catch (error) {
-        console.error('Failed to find available port:', error);
-        process.exit(1);
-    }
-};
-
-startServer(); 
+// Export the Express app
+module.exports = app; 
