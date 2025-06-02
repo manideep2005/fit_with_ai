@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
         {
-            "src": "api/index.js",
+            "src": "server.js",
             "use": "@vercel/node"
         }
     ],
@@ -27,12 +27,8 @@
             "handle": "filesystem"
         },
         {
-            "src": "/api/(.*)",
-            "dest": "/api/index.js"
-        },
-        {
             "src": "/(.*)",
-            "dest": "/api/index.js"
+            "dest": "/server.js"
         }
     ],
     "env": {
@@ -40,8 +36,6 @@
         "BASE_URL": "https://fit-with-ai.vercel.app",
         "APP_URL": "https://fit-with-ai.vercel.app",
         "SESSION_SECRET": "temporary-session-secret-key-12345",
-        "SMTP_USER": "@smtp_user",
-        "SMTP_PASS": "@smtp_pass",
         "VERCEL": "1"
     },
     "regions": ["bom1"],
