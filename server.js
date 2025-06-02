@@ -35,7 +35,7 @@ app.use(session({
 // Authentication middleware
 const requireAuth = (req, res, next) => {
     if (!req.session.userData) {
-        return res.status(401).json({ error: 'Authentication required' });
+        return res.redirect('/');
     }
     next();
 };
@@ -73,9 +73,10 @@ app.post('/login', (req, res) => {
             req.session.userData = {
                 id: 1,
                 email: email,
-                fullName: "Test User"
+                fullName: "Test User",
+                isOnboarded: false
             };
-            res.json({ success: true, isOnboarded: true });
+            res.json({ success: true, isOnboarded: false });
         } else {
             res.json({ success: false, error: 'Invalid credentials' });
         }
@@ -92,11 +93,47 @@ app.post('/signup', (req, res) => {
         req.session.userData = {
             id: 1,
             email: email,
-            fullName: fullName
+            fullName: fullName,
+            isOnboarded: false
+        };
+        res.json({ success: true, isOnboarded: false });
+    } catch (error) {
+        console.error('Signup error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Onboarding Routes
+app.get('/onboarding', requireAuth, (req, res) => {
+    try {
+        if (req.session.userData.isOnboarded) {
+            return res.redirect('/dashboard');
+        }
+        res.render('onboarding', { user: req.session.userData });
+    } catch (error) {
+        console.error('Onboarding error:', error);
+        res.status(500).json({ error: 'Error rendering onboarding page' });
+    }
+});
+
+app.post('/onboarding', requireAuth, (req, res) => {
+    try {
+        const { age, gender, height, weight, fitnessGoals, activityLevel } = req.body;
+        req.session.userData = {
+            ...req.session.userData,
+            isOnboarded: true,
+            userDetails: {
+                age,
+                gender,
+                height,
+                weight,
+                fitnessGoals,
+                activityLevel
+            }
         };
         res.json({ success: true });
     } catch (error) {
-        console.error('Signup error:', error);
+        console.error('Onboarding save error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -104,9 +141,12 @@ app.post('/signup', (req, res) => {
 // Protected Routes
 app.get('/dashboard', requireAuth, (req, res) => {
     try {
-        res.json({
+        if (!req.session.userData.isOnboarded) {
+            return res.redirect('/onboarding');
+        }
+        res.render('dashboard', {
             user: req.session.userData,
-            userDetails: {
+            userDetails: req.session.userData.userDetails || {
                 age: 25,
                 gender: "Not specified",
                 height: "170cm",
@@ -117,7 +157,7 @@ app.get('/dashboard', requireAuth, (req, res) => {
         });
     } catch (error) {
         console.error('Dashboard error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Error rendering dashboard' });
     }
 });
 
