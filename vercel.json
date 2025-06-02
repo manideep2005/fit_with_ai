@@ -6,10 +6,31 @@
             "use": "@vercel/node"
         }
     ],
-    "rewrites": [
+    "routes": [
         {
-            "source": "/(.*)",
-            "destination": "/server.js"
+            "src": "/(.*)",
+            "dest": "server.js",
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept",
+                "Access-Control-Allow-Credentials": "true",
+                "Cache-Control": "no-store, no-cache, must-revalidate",
+                "X-Frame-Options": "DENY",
+                "X-Content-Type-Options": "nosniff",
+                "Referrer-Policy": "strict-origin-when-cross-origin"
+            }
         }
-    ]
+    ],
+    "env": {
+        "NODE_ENV": "production",
+        "BASE_URL": "https://fit-with-ai.vercel.app",
+        "SESSION_SECRET": "your-secret-key",
+        "VERCEL": "1"
+    },
+    "regions": ["bom1"],
+    "public": true,
+    "github": {
+        "silent": true
+    }
 } 
