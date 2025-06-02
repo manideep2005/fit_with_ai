@@ -397,7 +397,10 @@ app.post('/signup', async (req, res) => {
     try {
         const { fullName, email, password } = req.body;
         
+        console.log('📝 Signup attempt:', { fullName, email });
+        
         if (!fullName || !email || !password) {
+            console.log('❌ Missing required fields:', { fullName: !!fullName, email: !!email, password: !!password });
             return res.status(400).json({ 
                 success: false, 
                 error: 'Missing required fields' 
@@ -412,23 +415,32 @@ app.post('/signup', async (req, res) => {
             isOnboarded: false
         };
 
+        console.log('✅ Session created:', req.session.userData);
+
+        // Send welcome email in background
+        try {
+            console.log('📧 Attempting to send welcome email to:', email);
+            const emailResult = await sendWelcomeEmail(email, fullName);
+            console.log('📧 Welcome email result:', emailResult);
+            
+            if (!emailResult.success) {
+                console.error('❌ Welcome email failed:', emailResult.error);
+            }
+        } catch (emailError) {
+            console.error('❌ Welcome email error:', emailError);
+        }
+
         res.json({ 
             success: true, 
             redirectTo: '/custom-onboarding',
             message: 'Account created successfully!'
         });
-
-        // Send welcome email in background
-        try {
-            await sendWelcomeEmail(email, fullName);
-        } catch (emailError) {
-            console.error('Welcome email error:', emailError);
-        }
     } catch (error) {
-        console.error('Signup error:', error);
+        console.error('❌ Signup error:', error);
         res.status(500).json({ 
             success: false, 
-            error: 'Internal server error' 
+            error: 'Internal server error',
+            details: error.message 
         });
     }
 });

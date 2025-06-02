@@ -8,6 +8,10 @@ const createTransporter = () => {
     if (transporter) return transporter;
     
     try {
+        console.log('📧 Creating email transporter...');
+        console.log('📧 SMTP User:', process.env.SMTP_USER ? '✅ Set' : '❌ Missing');
+        console.log('📧 SMTP Pass:', process.env.SMTP_PASS ? '✅ Set' : '❌ Missing');
+
         transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
             port: 465,
@@ -20,17 +24,24 @@ const createTransporter = () => {
                 rejectUnauthorized: false
             }
         });
+
+        console.log('✅ Email transporter created successfully');
         return transporter;
     } catch (error) {
-        console.error('Failed to create email transporter:', error);
+        console.error('❌ Failed to create email transporter:', error);
         return null;
     }
 };
 
 // Verify connection configuration with retries
 const verifyConnection = async () => {
+    console.log('🔍 Starting email service verification...');
+    
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
         console.warn('⚠️ Email service disabled - missing SMTP credentials');
+        console.log('Required environment variables:');
+        console.log('SMTP_USER:', process.env.SMTP_USER ? '✅ Set' : '❌ Missing');
+        console.log('SMTP_PASS:', process.env.SMTP_PASS ? '✅ Set' : '❌ Missing');
         return false;
     }
 
@@ -44,6 +55,7 @@ const verifyConnection = async () => {
     const maxRetries = 3;
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
+            console.log(`📧 Verification attempt ${attempt}/${maxRetries}...`);
             await transport.verify();
             console.log('✅ SMTP connection verified and ready');
             return true;
