@@ -543,10 +543,16 @@ app.post('/custom-onboarding', requireAuth, async (req, res) => {
         console.log('POST /custom-onboarding - Body:', req.body);
         console.log('Session:', req.session);
         
-        const { age, gender, height, weight, fitnessGoals, medicalConditions, activityLevel } = req.body;
+        const { 
+            firstName, lastName, age, gender, height, weight,
+            occupation, email, phone, targetWeight, bodyType,
+            fitnessGoals, medicalConditions, activityLevel,
+            exerciseTypes, stressLevel, anxietyLevel,
+            healthScreenings
+        } = req.body;
         
         // Validate required fields
-        if (!age || !gender || !height || !weight) {
+        if (!age || !gender || !height || !weight || !firstName || !lastName || !email) {
             console.log('Missing required fields');
             return res.status(400).json({ 
                 success: false, 
@@ -559,13 +565,24 @@ app.post('/custom-onboarding', requireAuth, async (req, res) => {
             ...req.session.userData,
             isOnboarded: true,
             userDetails: {
+                firstName,
+                lastName,
                 age,
                 gender,
                 height,
                 weight,
-                fitnessGoals: fitnessGoals || '',
-                medicalConditions: medicalConditions || '',
-                activityLevel: activityLevel || ''
+                occupation,
+                email,
+                phone,
+                targetWeight,
+                bodyType,
+                fitnessGoals,
+                medicalConditions,
+                activityLevel,
+                exerciseTypes,
+                stressLevel,
+                anxietyLevel,
+                healthScreenings
             }
         };
 
@@ -573,7 +590,7 @@ app.post('/custom-onboarding', requireAuth, async (req, res) => {
 
         try {
             // Generate and send PDF
-            await generateAndSendPDF(req.session.userData, req.session.userData.email);
+            await generateAndSendPDF(req.session.userData, email);
             console.log('PDF generated and sent successfully');
         } catch (pdfError) {
             console.error('PDF generation error:', pdfError);
