@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit-With-AI - User Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="Dashboard.css">
+   
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <%- include('partials/navigation', { currentPage: 'dashboard' }) %>
+        </aside>
+        
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <main class="main-content">
+            <div class="header">
+                <h1 class="page-title">Welcome back, <span id="welcomeNameDisplay">G.Manideep</span>!</h1>
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search...">
+                    </div>
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- Stats Widgets -->
+                <div class="widget widget-sm">
+                    <div class="widget-header">
+                        <div class="widget-title">Calories Burned</div>
+                        <div class="widget-action"><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    <div class="stat-value" data-target="2845">0</div>
+                    <div class="stat-label">Daily Goal: 3,000</div>
+                    <div class="stat-change stat-increase">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>15% from last week</span>
+                    </div>
+                </div>
+                
+                <div class="widget widget-sm">
+                    <div class="widget-header">
+                        <div class="widget-title">Active Minutes</div>
+                        <div class="widget-action"><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    <div class="stat-value" data-target="87">0</div>
+                    <div class="stat-label">Daily Goal: 120</div>
+                    <div class="stat-change stat-increase">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>23% from last week</span>
+                    </div>
+                </div>
+                
+                <div class="widget widget-sm">
+                    <div class="widget-header">
+                        <div class="widget-title">Steps</div>
+                        <div class="widget-action"><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    <div class="stat-value" data-target="8742">0</div>
+                    <div class="stat-label">Daily Goal: 10,000</div>
+                    <div class="stat-change stat-increase">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>8% from last week</span>
+                    </div>
+                </div>
+                
+                <div class="widget widget-sm">
+                    <div class="widget-header">
+                        <div class="widget-title">Fitness Score</div>
+                        <div class="widget-action"><i class="fas fa-ellipsis-h"></i></div>
+                    </div>
+                    <div class="stat-value" data-target="78">0</div>
+                    <div class="stat-label">Great Progress!</div>
+                    <div class="stat-change stat-increase">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>5 points this month</span>
+                    </div>
+                </div>
+                
+                <!-- Weekly Progress Chart -->
+                <div class="widget widget-full">
+                    <div class="widget-header">
+                        <div class="widget-title">Weekly Activity</div>
+                        <div class="widget-action"><i class="fas fa-sync-alt"></i></div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="weeklyActivityChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Today's Workout -->
+                <div class="widget widget-md">
+                    <div class="widget-header">
+                        <div class="widget-title">Today's Workout</div>
+                        <div class="widget-action"><i class="fas fa-play-circle"></i></div>
+                    </div>
+                    <div class="workout-list">
+                        <div class="workout-item">
+                            <div class="workout-info">
+                                <div class="workout-icon"><i class="fas fa-running"></i></div>
+                                <div class="workout-details">
+                                    <h4>Warm-up Cardio</h4>
+                                    <p>10 minutes at moderate pace</p>
+                                </div>
+                            </div>
+                            <div class="workout-time">7:00 AM</div>
+                        </div>
+                        <div class="workout-item">
+                            <div class="workout-info">
+                                <div class="workout-icon"><i class="fas fa-dumbbell"></i></div>
+                                <div class="workout-details">
+                                    <h4>Upper Body Strength</h4>
+                                    <p>4 sets × 12 reps</p>
+                                </div>
+                            </div>
+                            <div class="workout-time">7:15 AM</div>
+                        </div>
+                        <div class="workout-item">
+                            <div class="workout-info">
+                                <div class="workout-icon"><i class="fas fa-heartbeat"></i></div>
+                                <div class="workout-details">
+                                    <h4>HIIT Session</h4>
+                                    <p>20 minutes interval training</p>
+                                </div>
+                            </div>
+                            <div class="workout-time">8:00 AM</div>
+                        </div>
+                        <div class="workout-item">
+                            <div class="workout-info">
+                                <div class="workout-icon"><i class="fas fa-wind"></i></div>
+                                <div class="workout-details">
+                                    <h4>Cool Down & Stretch</h4>
+                                    <p>10 minutes full body</p>
+                                </div>
+                            </div>
+                            <div class="workout-time">8:30 AM</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Nutrition Tracking -->
+                <div class="widget widget-md">
+                    <div class="widget-header">
+                        <div class="widget-title">Nutrition Tracking</div>
+                        <div class="widget-action"><i class="fas fa-plus-circle"></i></div>
+                    </div>
+                    <div class="nutrition-chart">
+                        <div class="nutrition-item">
+                            <div class="nutrition-bar" style="height: 100px">
+                                <div class="nutrition-fill nutrition-fill-protein" style="height: 75%"></div>
+                            </div>
+                            <div class="nutrition-label">Protein</div>
+                            <div class="nutrition-value">150g / 200g</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-bar" style="height: 100px">
+                                <div class="nutrition-fill nutrition-fill-carbs" style="height: 60%"></div>
+                            </div>
+                            <div class="nutrition-label">Carbs</div>
+                            <div class="nutrition-value">180g / 300g</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-bar" style="height: 100px">
+                                <div class="nutrition-fill nutrition-fill-fat" style="height: 85%"></div>
+                            </div>
+                            <div class="nutrition-label">Fat</div>
+                            <div class="nutrition-value">68g / 80g</div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-header">
+                            <div class="progress-title">Calories Consumed</div>
+                            <div class="progress-value">1,840 / 2,400</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-fill-primary" style="width: 77%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-header">
+                            <div class="progress-title">Water Intake</div>
+                            <div class="progress-value">1.5L / 2.5L</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-fill-secondary" style="width: 60%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity -->
+                <div class="widget widget-md">
+                    <div class="widget-header">
+                        <div class="widget-title">Recent Activity</div>
+                        <div class="widget-action"><i class="fas fa-filter"></i></div>
+                    </div>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon"><i class="fas fa-trophy"></i></div>
+                            <div class="activity-details">
+                                <h4>Achievement Unlocked!</h4>
+                                <p>You've completed 7 consecutive workouts</p>
+                            </div>
+                            <div class="activity-time">2h ago</div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon"><i class="fas fa-running"></i></div>
+                            <div class="activity-details">
+                                <h4>Morning Run Completed</h4>
+                                <p>5.2km in 28 minutes</p>
+                            </div>
+                            <div class="activity-time">5h ago</div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon"><i class="fas fa-apple-alt"></i></div>
+                            <div class="activity-details">
+                                <h4>Meal Logged</h4>
+                                <p>Breakfast: Protein Smoothie & Oatmeal</p>
+                            </div>
+                            <div class="activity-time">8h ago </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add this in the user profile section or where appropriate -->
+            <div class="action-buttons">
+                <a href="/download-details" class="btn btn-primary">
+                    <i class="fas fa-download"></i> Download My Profile
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <style>
+        .action-buttons {
+            margin: 20px 0;
+            text-align: right;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn i {
+            font-size: 1.1em;
+        }
+    </style>
+</body>
+</html>
