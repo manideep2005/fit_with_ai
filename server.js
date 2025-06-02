@@ -430,19 +430,25 @@ app.get('/health', (req, res) => {
 // Routes
 app.get('/', (req, res) => {
     try {
+        // If user is logged in but not onboarded, redirect to onboarding
+        if (req.session.userData && !req.session.userData.isOnboarded) {
+            return res.redirect('/custom-onboarding');
+        }
+        
         // If user is logged in and onboarded, redirect to dashboard
         if (req.session.userData && req.session.userData.isOnboarded) {
             return res.redirect('/dashboard');
         }
-        // Always render index for non-logged in users
-        res.render('index', { user: req.session.userData || null });
+
+        // For non-logged in users, show index page
+        res.render('index', { user: null });
     } catch (error) {
         console.error('Error rendering index:', error);
         res.status(500).json({ error: 'Error rendering page' });
     }
 });
 
-// Basic Auth Routes (without DB)
+// Login route
 app.post('/login', (req, res) => {
     try {
         const { email, password } = req.body;
@@ -454,10 +460,9 @@ app.post('/login', (req, res) => {
                 fullName: "Test User",
                 isOnboarded: false
             };
-            // Redirect to onboarding if not onboarded
             return res.json({ 
                 success: true, 
-                redirectTo: '/CustomOnboarding'
+                redirectTo: '/custom-onboarding'
             });
         } else {
             res.json({ success: false, error: 'Invalid credentials' });
@@ -468,88 +473,43 @@ app.post('/login', (req, res) => {
     }
 });
 
+// Signup route
 app.post('/signup', async (req, res) => {
     try {
-        console.log('Received signup request:', req.body);
-        
-        // Basic validation
-        if (!req.body) {
-            console.error('No request body received');
-            return res.status(400).json({ success: false, error: 'No data provided' });
-        }
-
         const { fullName, email, password } = req.body;
         
-        // Detailed validation logging
-        console.log('Validating signup data:', {
-            hasFullName: !!fullName,
-            hasEmail: !!email,
-            hasPassword: !!password
-        });
-        
         if (!fullName || !email || !password) {
-            const missingFields = [];
-            if (!fullName) missingFields.push('fullName');
-            if (!email) missingFields.push('email');
-            if (!password) missingFields.push('password');
-            
-            console.error('Missing required fields:', missingFields);
             return res.status(400).json({ 
                 success: false, 
-                error: `Missing required fields: ${missingFields.join(', ')}` 
+                error: 'Missing required fields' 
             });
         }
 
+        // Create session
+        req.session.userData = {
+            id: Date.now(),
+            email: email,
+            fullName: fullName,
+            isOnboarded: false
+        };
+
+        res.json({ 
+            success: true, 
+            redirectTo: '/custom-onboarding',
+            message: 'Account created successfully!'
+        });
+
+        // Send welcome email in background
         try {
-            // Create session
-            req.session.userData = {
-                id: Date.now(),
-                email: email,
-                fullName: fullName,
-                isOnboarded: false
-            };
-            
-            console.log('Session created successfully:', {
-                id: req.session.userData.id,
-                email: req.session.userData.email
-            });
-
-            // Return success without waiting for email
-            res.json({ 
-                success: true, 
-                redirectTo: '/CustomOnboarding',
-                message: 'Account created successfully! Sending welcome email...'
-            });
-
-            // Send welcome email after response
-            try {
-                await sendWelcomeEmail(email, fullName);
-                console.log('Welcome email sent successfully to:', email);
-            } catch (emailError) {
-                console.error('Welcome email error:', {
-                    error: emailError.message,
-                    code: emailError.code,
-                    response: emailError.response
-                });
-                // Email error doesn't affect signup success
-            }
-        } catch (sessionError) {
-            console.error('Session creation error:', {
-                error: sessionError.message,
-                stack: sessionError.stack
-            });
-            throw new Error('Failed to create user session');
+            await sendWelcomeEmail(email, fullName);
+        } catch (emailError) {
+            console.error('Welcome email error:', emailError);
         }
     } catch (error) {
-        console.error('Signup process error:', {
-            name: error.name,
-            message: error.message,
-            stack: error.stack
-        });
-        
-        return res.status(500).json({ 
+        console.error('Signup error:', error);
+        res.status(500).json({ 
             success: false, 
-            error: 'Internal server error during signup. Please try again.' 
+            error: 'Internal server error' 
         });
     }
 });
@@ -557,32 +517,24 @@ app.post('/signup', async (req, res) => {
 // Custom onboarding route
 app.get('/custom-onboarding', (req, res) => {
     try {
-        console.log('GET /custom-onboarding - Session:', req.session);
-        
-        // Check if user is logged in
+        // Must be logged in to access onboarding
         if (!req.session.userData) {
-            console.log('User not logged in, redirecting to /')
             return res.redirect('/');
         }
-        
+
         // If already onboarded, go to dashboard
         if (req.session.userData.isOnboarded) {
-            console.log('User already onboarded, redirecting to dashboard');
             return res.redirect('/dashboard');
         }
-        
-        // Show onboarding only for logged-in, non-onboarded users
-        console.log('Rendering custom-onboarding page');
+
+        // Show onboarding for logged-in, non-onboarded users
         res.render('custom-onboarding', { 
             user: req.session.userData,
             error: req.query.error
         });
     } catch (error) {
         console.error('Onboarding error:', error);
-        res.status(500).json({ 
-            error: 'Error rendering onboarding page',
-            details: error.message 
-        });
+        res.status(500).json({ error: 'Error rendering onboarding page' });
     }
 });
 
@@ -643,31 +595,16 @@ app.post('/custom-onboarding', requireAuth, async (req, res) => {
     }
 });
 
-// Protected Routes
+// Dashboard and protected routes
 app.get('/dashboard', requireAuth, (req, res) => {
     try {
+        // Must complete onboarding first
         if (!req.session.userData.isOnboarded) {
             return res.redirect('/custom-onboarding');
         }
         
-        // Get user data from session
-        const userData = req.session.userData;
-        const userDetails = userData.userDetails || {
-            age: 25,
-            gender: "Not specified",
-            height: "170cm",
-            weight: "70kg",
-            fitnessGoals: "Stay healthy",
-            activityLevel: "Moderate"
-        };
-
-        // Render dashboard with user data
         res.render('dashboard', {
-            user: {
-                ...userData,
-                fullName: userData.fullName || 'User',
-                ...userDetails
-            }
+            user: req.session.userData
         });
     } catch (error) {
         console.error('Dashboard error:', error);
