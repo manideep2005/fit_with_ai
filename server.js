@@ -10,7 +10,13 @@ const app = express();
 
 // Middleware
 app.set('view engine', 'ejs');
-app.use(express.static('public'));
+app.set('views', path.join(__dirname, 'views'));
+
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/css', express.static(path.join(__dirname, 'public/css')));
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -20,63 +26,49 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: process.env.NODE_ENV === 'production', // Only use secure cookies in production
+        secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 }));
 
-// Error handling for session
+// Basic error handler for views
 app.use((err, req, res, next) => {
-    if (err.name === 'SessionError') {
-        return res.status(500).json({ error: 'Session error occurred' });
+    console.error('Error:', err);
+    if (err.code === 'ENOENT' && err.message.includes('.ejs')) {
+        return res.status(404).json({ error: 'View not found' });
     }
     next(err);
 });
 
-// Move static files to public directory
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Authentication middleware
-const requireAuth = (req, res, next) => {
-    if (!req.session.userData) {
-        res.redirect('/');
-        return;
-    }
-    next();
-};
-
-// Error logging middleware
-app.use((req, res, next) => {
-    const start = Date.now();
-    res.on('finish', () => {
-        const duration = Date.now() - start;
-        console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl} - Status: ${res.statusCode} - Duration: ${duration}ms`);
-        if (res.statusCode >= 400) {
-            console.error(`Error: ${res.statusCode} on ${req.method} ${req.originalUrl}`);
-        }
-    });
-    next();
-});
-
 // Routes
 app.get('/', (req, res) => {
-    res.render('index', { user: req.session.userData });
+    try {
+        res.render('index', { user: req.session.userData });
+    } catch (error) {
+        console.error('Error rendering index:', error);
+        res.status(500).json({ error: 'Error rendering page' });
+    }
 });
 
 // Basic Auth Routes (without DB)
 app.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    // For testing purposes
-    if (email === "test@example.com" && password === "password") {
-        req.session.userData = {
-            id: 1,
-            email: email,
-            fullName: "Test User"
-        };
-        res.json({ success: true, isOnboarded: true });
-    } else {
-        res.json({ success: false, error: 'Invalid credentials' });
+    try {
+        const { email, password } = req.body;
+        // For testing purposes
+        if (email === "test@example.com" && password === "password") {
+            req.session.userData = {
+                id: 1,
+                email: email,
+                fullName: "Test User"
+            };
+            res.json({ success: true, isOnboarded: true });
+        } else {
+            res.json({ success: false, error: 'Invalid credentials' });
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -174,19 +166,25 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error('Global error:', err);
+    res.status(500).json({ 
+        error: 'An error occurred',
+        details: process.env.NODE_ENV === 'development' ? err.message : 'Internal Server Error'
+    });
+});
+
 // Start server with error handling
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 }).on('error', (err) => {
     console.error('Server failed to start:', err);
-});
-
-// Global error handler
-app.use((err, req, res, next) => {
-    console.error('Error:', err);
-    res.status(500).render('error', { 
-        error: 'An error occurred',
-        details: process.env.NODE_ENV === 'development' ? err.message : 'Internal Server Error'
-    });
+    process.exit(1);
 }); 
