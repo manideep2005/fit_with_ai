@@ -10,12 +10,44 @@
             "use": "@vercel/static"
         }
     ],
-    "rewrites": [
-        { "source": "/js/(.*)", "destination": "/public/js/$1" },
-        { "source": "/css/(.*)", "destination": "/public/css/$1" },
-        { "source": "/images/(.*)", "destination": "/public/images/$1" },
-        { "source": "/videos/(.*)", "destination": "/public/videos/$1" },
-        { "source": "/(.*)", "destination": "/server.js" }
+    "routes": [
+        {
+            "src": "/js/(.*)",
+            "dest": "/public/js/$1"
+        },
+        {
+            "src": "/css/(.*)",
+            "dest": "/public/css/$1"
+        },
+        {
+            "src": "/images/(.*)",
+            "dest": "/public/images/$1"
+        },
+        {
+            "src": "/videos/(.*)",
+            "dest": "/public/videos/$1"
+        },
+        {
+            "src": "/CustomOnboarding",
+            "dest": "/server.js",
+            "headers": {
+                "Cache-Control": "no-store, no-cache, must-revalidate"
+            }
+        },
+        {
+            "src": "/dashboard",
+            "dest": "/server.js",
+            "headers": {
+                "Cache-Control": "no-store, no-cache, must-revalidate"
+            }
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/server.js",
+            "headers": {
+                "Cache-Control": "no-store, no-cache, must-revalidate"
+            }
+        }
     ],
     "env": {
         "NODE_ENV": "production",
