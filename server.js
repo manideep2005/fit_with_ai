@@ -6,7 +6,11 @@ const PDFDocument = require('pdfkit');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
-const { sendWelcomeEmail, sendAssessmentCompletionEmail, transporter } = require('./services/emailService');
+const { 
+    sendWelcomeEmail, 
+    sendAssessmentCompletionEmail, 
+    initializeEmailService 
+} = require('./services/emailService');
 require('dotenv').config();
 
 const app = express();
@@ -82,9 +86,13 @@ const verifyConnection = async () => {
     return false;
 };
 
-// Initialize email configuration
+// Initialize email service
 (async () => {
-    await verifyConnection();
+    try {
+        await initializeEmailService();
+    } catch (error) {
+        console.error('Failed to initialize email service:', error);
+    }
 })();
 
 // Function to generate and send PDF
@@ -101,7 +109,8 @@ async function generateAndSendPDF(userData, userEmail) {
             }
 
             // Pipe PDF to file
-            doc.pipe(fs.createWriteStream(filePath));
+            const writeStream = fs.createWriteStream(filePath);
+            doc.pipe(writeStream);
 
             // Add header with logo placeholder
             doc.fontSize(28)
@@ -215,40 +224,11 @@ async function generateAndSendPDF(userData, userEmail) {
                    width: 400
                });
 
-            // Finalize PDF
-            doc.end();
-
-            // Send PDF via email
-            doc.on('end', async () => {
+            // Handle PDF generation completion
+            writeStream.on('finish', async () => {
                 try {
-                    const mailOptions = {
-                        from: process.env.SMTP_USER || 'fitwitai18@gmail.com',
-                        to: userEmail,
-                        subject: '🏋️‍♂️ Your FitWit AI Personalized Fitness Plan',
-                        html: `
-                            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                                <h2 style="color: #4ecdc4;">Your Personalized Fitness Plan is Ready! 🎉</h2>
-                                <p>Thank you for completing your fitness assessment! We've created a comprehensive plan just for you.</p>
-                                <p>Attached is your personalized fitness journey document that includes:</p>
-                                <ul>
-                                    <li>Your Personal Information</li>
-                                    <li>Fitness Goals</li>
-                                    <li>11-Step Fitness Journey</li>
-                                    <li>Customized Recommendations</li>
-                                </ul>
-                                <p>Review your plan and let's start your fitness journey together!</p>
-                                <p>If you have any questions, our team is here to help!</p>
-                            </div>
-                        `,
-                        attachments: [{
-                            filename: 'FitWit_AI_Fitness_Plan.pdf',
-                            path: filePath
-                        }]
-                    };
-
-                    await transporter.sendMail(mailOptions);
-                    console.log('Assessment PDF sent successfully');
-
+                    await sendAssessmentCompletionEmail(userEmail, userData.fullName);
+                    
                     // Clean up: delete the temporary file
                     fs.unlink(filePath, (err) => {
                         if (err) console.error('Error deleting temporary PDF:', err);
@@ -260,6 +240,14 @@ async function generateAndSendPDF(userData, userEmail) {
                     reject(error);
                 }
             });
+
+            writeStream.on('error', (error) => {
+                console.error('Error writing PDF:', error);
+                reject(error);
+            });
+
+            // End the document
+            doc.end();
         } catch (error) {
             console.error('Error generating PDF:', error);
             reject(error);
@@ -762,12 +750,12 @@ app.post('/api/send-nutrition-report', async (req, res) => {
     }
 });
 
-// Global error handler
+// Error handling middleware (place this before other routes)
 app.use((err, req, res, next) => {
-    console.error('Global error:', err);
-    res.status(500).json({ 
-        error: 'An error occurred',
-        details: process.env.NODE_ENV === 'development' ? err.message : 'Internal Server Error'
+    console.error('Error:', err);
+    res.status(500).json({
+        error: 'Internal Server Error',
+        message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
     });
 });
 

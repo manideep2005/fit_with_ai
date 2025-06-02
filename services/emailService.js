@@ -1,33 +1,50 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
+let transporter = null;
+
 // Create transporter object using Gmail SMTP
 const createTransporter = () => {
-    return nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS
-        },
-        tls: {
-            rejectUnauthorized: false
-        }
-    });
+    if (transporter) return transporter;
+    
+    try {
+        transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS
+            },
+            tls: {
+                rejectUnauthorized: false
+            }
+        });
+        return transporter;
+    } catch (error) {
+        console.error('Failed to create email transporter:', error);
+        return null;
+    }
 };
 
 // Verify connection configuration with retries
 const verifyConnection = async () => {
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-        console.warn('⚠️ Using default email credentials as environment variables are not set');
+        console.warn('⚠️ Email service disabled - missing SMTP credentials');
+        return false;
+    }
+
+    const transport = createTransporter();
+    if (!transport) {
+        console.error('❌ Failed to create email transporter');
+        return false;
     }
 
     console.log('🔍 Verifying SMTP connection...');
     const maxRetries = 3;
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-            await createTransporter().verify();
+            await transport.verify();
             console.log('✅ SMTP connection verified and ready');
             return true;
         } catch (error) {
@@ -43,22 +60,18 @@ const verifyConnection = async () => {
     return false;
 };
 
-// Initialize email configuration
-(async () => {
-    const isConnected = await verifyConnection();
-    if (!isConnected) {
-        console.error('❌ Email service is not properly configured. Some features may not work.');
-    }
-})();
-
 const sendWelcomeEmail = async (userEmail, userName) => {
+    if (!transporter) {
+        console.warn('⚠️ Email service not initialized - skipping welcome email');
+        return { success: false, error: 'Email service not initialized' };
+    }
+
     console.log('Starting welcome email send process for:', userEmail);
     const maxRetries = 3;
     let lastError = null;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-            const transporter = createTransporter();
             const mailOptions = {
                 from: {
                     name: 'FitWit AI',
@@ -111,17 +124,25 @@ const sendWelcomeEmail = async (userEmail, userName) => {
         }
     }
 
-    throw new Error(`Failed to send welcome email after ${maxRetries} attempts. Last error: ${lastError.message}`);
+    return { 
+        success: false, 
+        error: `Failed to send welcome email after ${maxRetries} attempts`,
+        details: lastError?.message 
+    };
 };
 
 const sendAssessmentCompletionEmail = async (userEmail, userName, assessmentData) => {
+    if (!transporter) {
+        console.warn('⚠️ Email service not initialized - skipping assessment email');
+        return { success: false, error: 'Email service not initialized' };
+    }
+
     console.log('Starting assessment completion email for:', userEmail);
     const maxRetries = 3;
     let lastError = null;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-            const transporter = createTransporter();
             const mailOptions = {
                 from: {
                     name: 'FitWit AI',
@@ -174,12 +195,26 @@ const sendAssessmentCompletionEmail = async (userEmail, userName, assessmentData
         }
     }
 
-    throw new Error(`Failed to send assessment email after ${maxRetries} attempts. Last error: ${lastError.message}`);
+    return { 
+        success: false, 
+        error: `Failed to send assessment email after ${maxRetries} attempts`,
+        details: lastError?.message 
+    };
+};
+
+// Initialize the email service
+const initializeEmailService = async () => {
+    const isConnected = await verifyConnection();
+    if (!isConnected) {
+        console.warn('⚠️ Email service initialization failed - some features may not work');
+    }
+    return isConnected;
 };
 
 module.exports = {
     sendWelcomeEmail,
     sendAssessmentCompletionEmail,
+    initializeEmailService,
     createTransporter
 }; 
 
