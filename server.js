@@ -406,6 +406,9 @@ const requireAuth = (req, res, next) => {
 app.use((req, res, next) => {
     const publicPaths = [
         '/api/test',
+        '/api/test-email',
+        '/api/debug-env',
+        '/test-email',
         '/js',
         '/css',
         '/images',

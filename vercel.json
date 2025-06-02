@@ -56,7 +56,8 @@
         "BASE_URL": "https://fit-with-6g5s8oroy-gonugunta-manideeps-projects.vercel.app",
         "APP_URL": "https://fit-with-6g5s8oroy-gonugunta-manideeps-projects.vercel.app",
         "SESSION_SECRET": "temporary-session-secret-key-12345",
-        "SMTP_USER": "fitwitai18@gmail.com"
+        "SMTP_USER": "manideepgonugunta2005@gmail.com",
+        "SMTP_PASS": "sxpbzvbyiphxljph"
     },
     "regions": ["bom1"],
     "public": true,
