@@ -26,8 +26,11 @@
                 "Cache-Control": "no-store, no-cache, must-revalidate",
                 "X-Frame-Options": "DENY",
                 "X-Content-Type-Options": "nosniff",
-                "Referrer-Policy": "strict-origin-when-cross-origin"
-            }
+                "Referrer-Policy": "strict-origin-when-cross-origin",
+                "x-vercel-skip-auth": "1",
+                "x-vercel-protection-bypass": "true"
+            },
+            "continue": true
         },
         {
             "src": "/api/debug-env",
